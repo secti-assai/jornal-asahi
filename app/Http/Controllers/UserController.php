@@ -58,25 +58,31 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Usuário criado com sucesso!');
     }
 
-    public function edit(User $user)
+    public function edit($id)
     {
+        // Verificação de permissão
         if (!Auth::check() || !Auth::user()->isAdmin()) {
             abort(403, 'Acesso não autorizado. Apenas administradores podem gerenciar usuários.');
         }
         
+        $user = User::findOrFail($id);
         $roles = Role::all();
+        
         return view('users.edit', compact('user', 'roles'));
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
+        // Verificação de permissão
         if (!Auth::check() || !Auth::user()->isAdmin()) {
             abort(403, 'Acesso não autorizado. Apenas administradores podem gerenciar usuários.');
         }
         
+        $user = User::findOrFail($id);
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
         ]);
@@ -96,13 +102,23 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'Usuário atualizado com sucesso!');
     }
 
-    public function destroy(User $user)
+    public function destroy($id)
     {
+        // Verificação de permissão
         if (!Auth::check() || !Auth::user()->isAdmin()) {
             abort(403, 'Acesso não autorizado. Apenas administradores podem gerenciar usuários.');
         }
         
+        $user = User::findOrFail($id);
+        
+        if ($user->id === Auth::id()) {
+            return redirect()->route('users.index')
+                ->with('error', 'Você não pode excluir seu próprio usuário.');
+        }
+        
         $user->delete();
-        return redirect()->route('users.index')->with('success', 'Usuário excluído com sucesso!');
+        
+        return redirect()->route('users.index')
+            ->with('success', 'Usuário excluído com sucesso!');
     }
 }

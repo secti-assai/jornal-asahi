@@ -38,15 +38,21 @@
         </div>
     </nav>
 
-    <main class="container">
+    <div class="container">
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
 
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
         @yield('content')
-    </main>
+    </div>
 
     <footer class="bg-dark text-white text-center p-3 mt-5">
         <div class="container">

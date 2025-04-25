@@ -5,7 +5,7 @@
     <div class="col-md-8 offset-md-2">
         <h1>Editar Usuário</h1>
         
-        <form action="{{ route('users.update', $user) }}" method="POST">
+        <form action="{{ route('users.update', ['id' => $user->id]) }}" method="POST">
             @csrf
             @method('PUT')
             
