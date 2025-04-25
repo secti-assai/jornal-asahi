@@ -1,10 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
 
 // Rotas públicas
 Route::get('/', [NewsController::class, 'index'])->name('home');
@@ -17,24 +17,23 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Rotas protegidas
 Route::middleware('auth')->group(function () {
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
-    // Rotas para repórteres
-    Route::middleware('role:reporter')->group(function () {
-        Route::get('/news/create', [NewsController::class, 'create'])->name('news.create');
-        Route::post('/news', [NewsController::class, 'store'])->name('news.store');
-        Route::get('/news/{news}/edit', [NewsController::class, 'edit'])->name('news.edit');
-        Route::put('/news/{news}', [NewsController::class, 'update'])->name('news.update');
-        Route::delete('/news/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
-    });
+    // Notícias - Note a ordem das rotas é importante
+    Route::get('/news/create', [NewsController::class, 'create'])->name('news.create');
+    Route::post('/news', [NewsController::class, 'store'])->name('news.store');
+    Route::get('/news/{news}/edit', [NewsController::class, 'edit'])->name('news.edit');
+    Route::put('/news/{news}', [NewsController::class, 'update'])->name('news.update');
+    Route::delete('/news/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
     
-    // Rotas para autorizadores
-    Route::middleware('role:approver')->group(function () {
-        Route::post('/news/{news}/approve', [NewsController::class, 'approve'])->name('news.approve');
-    });
-    
-    // Rotas para administradores
-    Route::middleware('role:admin')->group(function () {
-        Route::resource('users', UserController::class);
+    // Usuários - apenas para administradores
+    Route::middleware('check.role:3')->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 });

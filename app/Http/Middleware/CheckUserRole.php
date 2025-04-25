@@ -9,30 +9,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckUserRole
 {
-    public function handle(Request $request, Closure $next, $role): Response
+    public function handle(Request $request, Closure $next, $minLevel): Response
     {
         if (!Auth::check()) {
             return redirect('login');
         }
 
-        $user = Auth::user();
+        $userLevel = Auth::user()->role->level;
         
-        switch ($role) {
-            case 'admin':
-                if (!$user->isAdmin()) {
-                    abort(403, 'Acesso não autorizado.');
-                }
-                break;
-            case 'approver':
-                if (!$user->isApprover() && !$user->isAdmin()) {
-                    abort(403, 'Acesso não autorizado.');
-                }
-                break;
-            case 'reporter':
-                if (!$user->isReporter() && !$user->isApprover() && !$user->isAdmin()) {
-                    abort(403, 'Acesso não autorizado.');
-                }
-                break;
+        if ($userLevel < $minLevel) {
+            abort(403, 'Acesso não autorizado.');
         }
 
         return $next($request);
