@@ -40,6 +40,7 @@
     </div>
 </div>
 
+@push('scripts')
 <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 <script>
     ClassicEditor
@@ -48,4 +49,5 @@
             console.error(error);
         });
 </script>
+@endpush
 @endsection

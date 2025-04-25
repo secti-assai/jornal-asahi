@@ -6,9 +6,20 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!Auth::user()->isAdmin()) {
+                abort(403, 'Acesso não autorizado. Apenas administradores podem gerenciar usuários.');
+            }
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         $users = User::with('role')->paginate(10);
@@ -37,7 +48,7 @@ class UserController extends Controller
             'role_id' => $validated['role_id'],
         ]);
 
-        return redirect()->route('users.index')->with('success', 'Usuário criado com sucesso.');
+        return redirect()->route('users.index')->with('success', 'Usuário criado com sucesso!');
     }
 
     public function edit(User $user)
@@ -51,28 +62,28 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
         ]);
 
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
-        $user->role_id = $validated['role_id'];
-        
-        if ($request->filled('password')) {
-            $request->validate([
-                'password' => 'string|min:8|confirmed',
-            ]);
-            $user->password = Hash::make($request->password);
-        }
-        
-        $user->save();
+        $data = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role_id' => $validated['role_id'],
+        ];
 
-        return redirect()->route('users.index')->with('success', 'Usuário atualizado com sucesso.');
+        if (!empty($validated['password'])) {
+            $data['password'] = Hash::make($validated['password']);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('users.index')->with('success', 'Usuário atualizado com sucesso!');
     }
 
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect()->route('users.index')->with('success', 'Usuário excluído com sucesso.');
+        return redirect()->route('users.index')->with('success', 'Usuário excluído com sucesso!');
     }
 }
