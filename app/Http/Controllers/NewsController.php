@@ -34,25 +34,32 @@ class NewsController extends Controller
 
     public function store(Request $request)
     {
+        // Validação dos dados com limite de tamanho para o conteúdo
         $validated = $request->validate([
             'title' => 'required|max:255',
-            'content' => 'required',
-            'image' => 'nullable|image|max:2048',
+            'content' => 'required|max:65000', // Limitar o texto para um tamanho razoável
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Limitar tamanho da imagem para 2MB
         ]);
-
-        $news = new News();
-        $news->title = $validated['title'];
-        $news->content = $validated['content'];
-        $news->author_id = Auth::id();
         
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('news_images', 'public');
-            $news->image = $path;
+        try {
+            // Criar a notícia
+            $news = new News();
+            $news->title = $validated['title'];
+            $news->content = $validated['content'];
+            $news->author_id = auth()->id();
+            
+            // Processar imagem se existir
+            if ($request->hasFile('image') && $request->file('image')->isValid()) {
+                $imagePath = $request->file('image')->store('news_images', 'public');
+                $news->image = $imagePath;
+            }
+            
+            $news->save();
+            
+            return redirect()->route('dashboard')->with('success', 'Notícia criada com sucesso! Aguardando aprovação.');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Erro ao salvar notícia: ' . $e->getMessage());
         }
-        
-        $news->save();
-        
-        return redirect()->route('dashboard')->with('success', 'Notícia criada e aguardando aprovação.');
     }
 
     public function edit(News $news)
@@ -73,7 +80,7 @@ class NewsController extends Controller
         $validated = $request->validate([
             'title' => 'required|max:255',
             'content' => 'required',
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $news->title = $validated['title'];

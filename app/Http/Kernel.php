@@ -57,4 +57,12 @@ class Kernel extends HttpKernel
         // Apenas um dos aliases, não ambos
         'role' => \App\Http\Middleware\CheckUserRole::class,
     ];
+
+    /**
+     * Middlewares de rota
+     */
+    protected $routeMiddleware = [
+        // Outros middlewares...
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+    ];
 }

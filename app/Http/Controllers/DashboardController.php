@@ -12,15 +12,25 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
+        $myNews = null;
+        $pendingNews = null;
+        $allNews = null;
         
-        if ($user->isReporter()) {
-            $news = News::where('author_id', $user->id)->latest()->paginate(10);
-        } elseif ($user->isApprover()) {
-            $news = News::where('approved', false)->latest()->paginate(10);
-        } else { // Admin
-            $news = News::latest()->paginate(10);
+        // Para todos os usuários, mostrar suas próprias notícias
+        if ($user->isReporter() || $user->isApprover() || $user->isAdmin()) {
+            $myNews = News::where('author_id', $user->id)->latest()->paginate(5, ['*'], 'my_news');
         }
         
-        return view('dashboard.index', compact('news'));
+        // Para aprovadores e admins, mostrar notícias pendentes
+        if ($user->isApprover() || $user->isAdmin()) {
+            $pendingNews = News::where('approved', false)->latest()->paginate(5, ['*'], 'pending_news');
+        }
+        
+        // Apenas para admins, mostrar todas as notícias
+        if ($user->isAdmin()) {
+            $allNews = News::latest()->paginate(10, ['*'], 'all_news');
+        }
+        
+        return view('dashboard.index', compact('myNews', 'pendingNews', 'allNews'));
     }
 }
