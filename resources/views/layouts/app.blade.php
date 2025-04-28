@@ -3,40 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'Portal de Notícias') }}</title>
+    <title>{{ config('app.name', 'Asahi Shimbun') }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Adicionar o CKEditor aqui para garantir que está carregado antes do seu script -->
-    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e74c3c;
+            --secondary-color: #1e3a8a;
+            --light-grey: #f8f9fa;
+        }
+        .brand-logo {
+            max-height: 60px; /* Aumentado de 40px para 60px */
+            margin-right: 15px;
+        }
+        .header-title {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        .navbar-custom {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-link {
+            color: #333 !important;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-primary:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        .footer-dark {
+            background-color: #1a237e;
+            color: white;
+            padding: 3rem 0;
+        }
+        .section-title {
+            position: relative;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+        }
+        .section-title:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            height: 70%;
+            width: 5px;
+            background-color: var(--primary-color);
+        }
+        .live-indicator {
+            color: var(--primary-color);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        /* Melhorias para responsividade */
+        @media (max-width: 768px) {
+            .brand-logo {
+                max-height: 40px; /* Aumentado de 30px para 40px */
+            }
+            .header-title {
+                font-size: 1rem; /* Aumentado de 0.9rem para 1rem */
+            }
+        }
+
+        /* Modificação para ajustar o posicionamento do menu */
+        .navbar-nav {
+            margin-left: auto; /* Empurra os itens para direita */
+            margin-right: 20px; /* Espaço entre o menu e o botão de login */
+        }
+        
+        /* Aumentar o tamanho dos caracteres japoneses */
+        .japanese-text {
+            font-size: 1.5rem; /* Aumentado para destaque */
+            font-weight: bold;
+            color: #1a237e;
+        }
+    </style>
+    <!-- Adicionar fontes para suporte japonês -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <nav class="navbar navbar-expand-lg navbar-light navbar-custom mb-4">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('home') }}">Portal de Notícias</a>
+            <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
+                <!-- Logo do site com tamanho maior -->
+                <img src="{{ asset('storage/logo-asahi.png') }}" alt="Logo Asahi Shimbun" class="brand-logo">
+                <div class="d-flex flex-column align-items-start">
+                    <div class="header-title">
+                        <span class="japanese-text">朝日新聞</span>
+                    </div>
+                    <div style="font-size: 1rem; color: #555;">
+                        Asahi Shimbun
+                    </div>
+                </div>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <!-- Removido mx-auto para posicionar à direita -->
+                <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('home') }}">Home</a>
+                        <a class="nav-link" href="{{ route('home') }}">Início</a>
                     </li>
-                    @guest
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">Login</a>
-                        </li>
-                    @else
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn nav-link">Logout</button>
-                            </form>
-                        </li>
-                    @endguest
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('news.index') }}">Notícias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#eventos">Eventos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#educacao">Educação</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#cultura">Cultura</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#galeria">Galeria</a>
+                    </li>
                 </ul>
+                <div class="d-flex">
+                    @guest
+                        <a class="btn btn-outline-primary" href="{{ route('login') }}">Entrar</a>
+                    @else
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ Auth::user()->name }}
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">Sair</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    @endguest
+                </div>
             </div>
         </div>
     </nav>
@@ -57,16 +183,65 @@
         @yield('content')
     </div>
 
-    <footer class="bg-dark text-white text-center p-3 mt-5">
+    <footer class="footer-dark mt-5">
         <div class="container">
-            <p class="mb-0">© {{ date('Y') }} Portal de Notícias. Todos os direitos reservados.</p>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="mb-3">アサイ新聞</h5>
+                    <p class="text-light">Jornal municipal administrado por estudantes do ensino médio e fundamental da cidade de Assaí, focado em notícias, cultura e eventos para os jovens da comunidade.</p>
+                    <div class="mt-3">
+                        <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-light me-3"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="mb-3">Sobre</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Nossa História</a></li>
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Equipe</a></li>
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Como Participar</a></li>
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="mb-3">Conteúdo</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Notícias</a></li>
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Eventos</a></li>
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Galeria</a></li>
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Vídeos</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="mb-3">Suporte</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">FAQ</a></li>
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Privacidade</a></li>
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Termos de Uso</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="mb-3">Parceiros</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Prefeitura</a></li>
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Escolas</a></li>
+                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Associações</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-3 mb-3 bg-light">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0">© {{ date('Y') }} Asahi Shimbun. Todos os direitos reservados.</p>
+                    <p class="small">Desenvolvido por estudantes de Assaí-PR</p>
+                </div>
+            </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
-    
-    <!-- Stack para scripts específicos de cada página -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     @stack('scripts')
 </body>
 </html>

@@ -2,125 +2,184 @@
 
 @section('content')
 <div class="container py-4">
-    <header class="mb-5">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="display-4 text-center mb-4">Portal de Notícias</h1>
-                <hr class="my-4">
-            </div>
-        </div>
-    </header>
-
+    <!-- Seção de destaques com slider -->
     @if($featuredNews && $featuredNews->count() > 0)
-    <section class="featured-news mb-5">
-        <h2 class="h4 pb-2 mb-4 border-bottom">Destaques</h2>
-        <div id="newsCarousel" class="carousel slide shadow" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-                @foreach($featuredNews as $index => $item)
-                    <button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="{{ $index }}" 
-                        class="{{ $index == 0 ? 'active' : '' }}" aria-current="{{ $index == 0 ? 'true' : 'false' }}" 
-                        aria-label="Slide {{ $index + 1 }}"></button>
-                @endforeach
-            </div>
-            <div class="carousel-inner rounded">
-                @foreach($featuredNews as $index => $item)
-                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                        @if($item->image)
-                            <img src="{{ asset('storage/' . $item->image) }}" class="d-block w-100" alt="{{ $item->title }}" 
-                                style="height: 400px; object-fit: cover;">
-                        @else
-                            <div class="bg-secondary d-block w-100" style="height: 400px; display: flex; align-items: center; justify-content: center;">
-                                <span class="text-white">Sem imagem disponível</span>
-                            </div>
-                        @endif
-                        <div class="carousel-caption d-none d-md-block" style="background: rgba(0,0,0,0.6); border-radius: 8px; padding: 20px;">
-                            <h3>{{ $item->title }}</h3>
-                            <p>{{ Str::limit(strip_tags($item->content), 150) }}</p>
-                            <a href="{{ route('news.show', $item) }}" class="btn btn-primary">Ler mais</a>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Anterior</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Próximo</span>
-            </button>
-        </div>
-    </section>
-    @endif
-
-        <!-- Live Stream Section - Add this new section -->
-        @if(isset($activeLiveStream))
-    <section class="live-stream mb-5">
-        <h2 class="h4 pb-2 mb-4 border-bottom">Transmissão ao Vivo</h2>
-        <div class="card shadow">
-            <div class="ratio ratio-16x9">
-                <iframe 
-                    src="https://www.youtube.com/embed/{{ $activeLiveStream->youtube_video_id }}?rel=0" 
-                    title="{{ $activeLiveStream->title }}" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            </div>
-            <div class="card-body">
-                <h3 class="card-title">{{ $activeLiveStream->title }}</h3>
-                @if($activeLiveStream->description)
-                    <p class="card-text">{{ $activeLiveStream->description }}</p>
-                @endif
-                <a href="https://www.youtube.com/watch?v={{ $activeLiveStream->youtube_video_id }}" 
-                   class="btn btn-danger" target="_blank">
-                    <i class="bi bi-youtube"></i> Assistir no YouTube
-                </a>
-            </div>
-        </div>
-    </section>
-    @endif
-
-    <section class="latest-news">
-        <h2 class="h4 pb-2 mb-4 border-bottom">Últimas Notícias</h2>
-        
-        @if($latestNews && $latestNews->count() > 0)
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                @foreach($latestNews as $item)
-                    <div class="col">
-                        <div class="card h-100 shadow-sm">
-                            @if($item->image)
-                                <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" alt="{{ $item->title }}" 
-                                    style="height: 180px; object-fit: cover;">
-                            @else
-                                <div class="bg-light text-center py-5">
-                                    <i class="bi bi-image text-secondary" style="font-size: 2rem;"></i>
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="section-title">Notícias Recentes</h2>
+            <p class="text-muted mb-4">Mantenha-se informado com as últimas notícias de Assaí</p>
+            
+            <div id="featuredNewsCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    @foreach($featuredNews as $index => $item)
+                        <button type="button" data-bs-target="#featuredNewsCarousel" data-bs-slide-to="{{ $index }}" 
+                            class="{{ $index == 0 ? 'active' : '' }}" aria-current="{{ $index == 0 ? 'true' : 'false' }}" 
+                            aria-label="Slide {{ $index + 1 }}"></button>
+                    @endforeach
+                </div>
+                <div class="carousel-inner rounded overflow-hidden">
+                    @foreach($featuredNews as $index => $item)
+                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}" data-bs-interval="6000">
+                            <div class="position-relative">
+                                @if($item->image)
+                                    <img src="{{ asset('storage/' . $item->image) }}" class="d-block w-100" alt="{{ $item->title }}" 
+                                        style="height: 500px; object-fit: cover;">
+                                @else
+                                    <div class="bg-secondary d-block w-100" style="height: 500px; display: flex; align-items: center; justify-content: center;">
+                                        <span class="text-white">Sem imagem disponível</span>
+                                    </div>
+                                @endif
+                                <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                                    <div class="container">
+                                        <h2 class="text-white mb-2">{{ $item->title }}</h2>
+                                        <p class="text-white-50 mb-3">{{ Str::limit(strip_tags($item->content), 150) }}</p>
+                                        <a href="{{ route('news.show', $item) }}" class="btn btn-sm btn-primary">Ler matéria completa</a>
+                                    </div>
                                 </div>
-                            @endif
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $item->title }}</h5>
-                                <p class="card-text small text-muted">
-                                    <i class="bi bi-person-circle"></i> {{ $item->author->name }}
-                                    <br>
-                                    <i class="bi bi-calendar3"></i> {{ $item->published_at ? $item->published_at->format('d/m/Y H:i') : 'Não publicado' }}
-                                </p>
-                                <p class="card-text">{{ Str::limit(strip_tags($item->content), 100) }}</p>
-                            </div>
-                            <div class="card-footer bg-transparent">
-                                <a href="{{ route('news.show', $item) }}" class="btn btn-sm btn-outline-primary w-100">Ler mais</a>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#featuredNewsCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#featuredNewsCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Próximo</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Transmissão ao Vivo -->
+    @if(isset($activeLiveStream))
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title m-0">
+                    <i class="bi bi-broadcast live-indicator me-2"></i>
+                    Transmissão ao Vivo
+                </h2>
+                <a href="#" class="text-decoration-none text-primary">Ver mais transmissões <i class="bi bi-arrow-right"></i></a>
             </div>
             
-            <div class="d-flex justify-content-center mt-4">
-                {{ $latestNews->links() }}
+            <div class="card shadow border-0 overflow-hidden">
+                <div class="ratio ratio-16x9">
+                    <iframe 
+                        src="https://www.youtube.com/embed/{{ $activeLiveStream->youtube_video_id }}?autoplay=0&rel=0" 
+                        title="{{ $activeLiveStream->title }}" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h3 class="card-title h5">{{ $activeLiveStream->title }}</h3>
+                        <span class="badge bg-danger"><i class="bi bi-circle-fill me-1"></i> AO VIVO</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-calendar-event me-2"></i>
+                        <small class="text-muted">{{ date('d/m/Y, H:i', strtotime($activeLiveStream->start_time)) }}</small>
+                    </div>
+                    @if($activeLiveStream->description)
+                        <p class="card-text">{{ $activeLiveStream->description }}</p>
+                    @endif
+                    <a href="https://www.youtube.com/watch?v={{ $activeLiveStream->youtube_video_id }}" 
+                       class="btn btn-danger" target="_blank">
+                        <i class="bi bi-youtube me-2"></i> Assistir no YouTube
+                    </a>
+                </div>
             </div>
-        @else
-            <div class="alert alert-info">
-                Não há notícias publicadas no momento.
+        </div>
+    </div>
+    @endif
+
+    <!-- Últimas Notícias em Grid -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="section-title m-0">Últimas Notícias</h2>
+                <a href="{{ route('news.index') }}" class="text-decoration-none text-primary">Ver todas <i class="bi bi-arrow-right"></i></a>
             </div>
-        @endif
-    </section>
+        </div>
+    </div>
+
+    @if($latestNews && $latestNews->count() > 0)
+    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+        @foreach($latestNews as $item)
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm">
+                @if($item->image)
+                    <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" alt="{{ $item->title }}" 
+                        style="height: 200px; object-fit: cover;">
+                @else
+                    <div class="bg-light text-center p-4">
+                        <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
+                    </div>
+                @endif
+                <div class="card-body">
+                    <h5 class="card-title mb-3">{{ $item->title }}</h5>
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($item->author->name) }}&background=random" 
+                            class="rounded-circle me-2" alt="{{ $item->author->name }}" width="30" height="30">
+                        <div>
+                            <small class="d-block text-muted">{{ $item->author->name }}</small>
+                            <small class="text-muted">{{ $item->published_at ? $item->published_at->format('d/m/Y') : 'Não publicado' }}</small>
+                        </div>
+                    </div>
+                    <p class="card-text">{{ Str::limit(strip_tags($item->content), 100) }}</p>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <a href="{{ route('news.show', $item) }}" class="btn btn-outline-primary w-100">Ler mais</a>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+
+    <div class="d-flex justify-content-center mb-5">
+        {{ $latestNews->links() }}
+    </div>
+    @else
+    <div class="alert alert-info">
+        Não há notícias publicadas no momento.
+    </div>
+    @endif
+
+    <!-- Seja um Repórter Banner -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="bg-light rounded p-4 p-md-5 position-relative overflow-hidden">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h2 class="mb-3">Seja um Repórter</h2>
+                        <p class="lead mb-4">Você é estudante e tem interesse em jornalismo? Junte-se à nossa equipe de jovens repórteres e compartilhe histórias que importam!</p>
+                        <a href="#" class="btn btn-primary">Saiba como participar</a>
+                    </div>
+                    <div class="col-lg-4 d-none d-lg-block">
+                        <div class="position-absolute end-0 bottom-0">
+                            <i class="bi bi-pen text-primary" style="font-size: 8rem; opacity: 0.2;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Bootstrap carousel with custom settings
+        var myCarousel = document.querySelector('#featuredNewsCarousel')
+        var carousel = new bootstrap.Carousel(myCarousel, {
+            interval: 5000,
+            wrap: true,
+            touch: true
+        });
+    });
+</script>
+@endpush
