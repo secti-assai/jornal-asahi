@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\News;
 use App\Models\User;
+use App\Models\LiveStream;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,6 +16,7 @@ class DashboardController extends Controller
         $myNews = null;
         $pendingNews = null;
         $allNews = null;
+        $liveStreams = null;
         
         // Para todos os usuários, mostrar suas próprias notícias
         if ($user->isReporter() || $user->isApprover() || $user->isAdmin()) {
@@ -26,11 +28,12 @@ class DashboardController extends Controller
             $pendingNews = News::where('approved', false)->latest()->paginate(5, ['*'], 'pending_news');
         }
         
-        // Apenas para admins, mostrar todas as notícias
+        // Somente para admins, mostrar todas as notícias e transmissões ao vivo
         if ($user->isAdmin()) {
             $allNews = News::latest()->paginate(10, ['*'], 'all_news');
+            $liveStreams = LiveStream::latest()->get();
         }
         
-        return view('dashboard.index', compact('myNews', 'pendingNews', 'allNews'));
+        return view('dashboard.index', compact('myNews', 'pendingNews', 'allNews', 'liveStreams'));
     }
 }

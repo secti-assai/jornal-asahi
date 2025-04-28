@@ -56,13 +56,15 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         // Apenas um dos aliases, não ambos
         'role' => \App\Http\Middleware\CheckUserRole::class,
+        // ... outros middlewares
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
     ];
 
     /**
-     * Middlewares de rota
+     * The application's route middleware.
+     *
+     * These middleware may be assigned to groups or used individually.
+     *
+     * @var array<string, class-string|string>
      */
-    protected $routeMiddleware = [
-        // Outros middlewares...
-        'admin' => \App\Http\Middleware\AdminMiddleware::class,
-    ];
 }

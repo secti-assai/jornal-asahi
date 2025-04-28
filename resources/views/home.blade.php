@@ -53,6 +53,33 @@
     </section>
     @endif
 
+        <!-- Live Stream Section - Add this new section -->
+        @if(isset($activeLiveStream))
+    <section class="live-stream mb-5">
+        <h2 class="h4 pb-2 mb-4 border-bottom">Transmissão ao Vivo</h2>
+        <div class="card shadow">
+            <div class="ratio ratio-16x9">
+                <iframe 
+                    src="https://www.youtube.com/embed/{{ $activeLiveStream->youtube_video_id }}?rel=0" 
+                    title="{{ $activeLiveStream->title }}" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">{{ $activeLiveStream->title }}</h3>
+                @if($activeLiveStream->description)
+                    <p class="card-text">{{ $activeLiveStream->description }}</p>
+                @endif
+                <a href="https://www.youtube.com/watch?v={{ $activeLiveStream->youtube_video_id }}" 
+                   class="btn btn-danger" target="_blank">
+                    <i class="bi bi-youtube"></i> Assistir no YouTube
+                </a>
+            </div>
+        </div>
+    </section>
+    @endif
+
     <section class="latest-news">
         <h2 class="h4 pb-2 mb-4 border-bottom">Últimas Notícias</h2>
         

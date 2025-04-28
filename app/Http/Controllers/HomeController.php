@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use App\Models\LiveStream;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -24,6 +25,13 @@ class HomeController extends Controller
             ->orderBy('published_at', 'desc')
             ->paginate(9);
         
-        return view('home', compact('featuredNews', 'latestNews'));
+        // Buscar transmissão ativa, com verificação para evitar erro caso a tabela não exista
+        try {
+            $activeLiveStream = LiveStream::where('is_active', true)->first();
+        } catch (\Exception $e) {
+            $activeLiveStream = null;
+        }
+        
+        return view('home', compact('featuredNews', 'latestNews', 'activeLiveStream'));
     }
 }

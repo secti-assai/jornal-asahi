@@ -42,18 +42,33 @@ class User extends Authenticatable
         return $this->hasMany(News::class, 'approved_by');
     }
 
-    public function isReporter()
-    {
-        return $this->role->level === 1;
-    }
-
-    public function isApprover()
-    {
-        return $this->role->level === 2;
-    }
-
+    /**
+     * Verifica se o usuário é um administrador
+     *
+     * @return bool
+     */
     public function isAdmin()
     {
-        return $this->role->level === 3;
+        return (int)$this->role_id === 3; // Certifique-se que 3 é o ID correto para administradores
+    }
+
+    /**
+     * Verifica se o usuário é um aprovador
+     *
+     * @return bool
+     */
+    public function isApprover()
+    {
+        return $this->role_id === 2 || $this->isAdmin(); // ID 2 é aprovador
+    }
+
+    /**
+     * Verifica se o usuário é um repórter
+     *
+     * @return bool
+     */
+    public function isReporter()
+    {
+        return $this->role_id === 1 || $this->isApprover(); // ID 1 é reporter
     }
 }
