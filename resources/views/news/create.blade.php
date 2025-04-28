@@ -48,28 +48,98 @@
         </div>
     </form>
 </div>
+@endsection
 
 @push('scripts')
 <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Definir adapter personalizado para upload
+    class MyUploadAdapter {
+        constructor(loader) {
+            this.loader = loader;
+        }
+
+        upload() {
+            return this.loader.file
+                .then(file => {
+                    return new Promise((resolve, reject) => {
+                        const data = new FormData();
+                        data.append('upload', file);
+                        
+                        // Adicionar token CSRF
+                        data.append('_token', '{{ csrf_token() }}');
+                        
+                        fetch('{{ route("ckeditor.upload") }}', {
+                            method: 'POST',
+                            body: data,
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(responseData => {
+                            if (!responseData || responseData.uploaded !== 1) {
+                                reject(responseData && responseData.error ? responseData.error.message : 'Upload falhou');
+                                return;
+                            }
+                            
+                            resolve({
+                                default: responseData.url
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Erro durante upload:', error);
+                            reject('Falha na comunicação com o servidor');
+                        });
+                    });
+                });
+        }
+
+        abort() {
+            // Cancelar upload se necessário
+        }
+    }
+
+    function MyCustomUploadAdapterPlugin(editor) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return new MyUploadAdapter(loader);
+        };
+    }
+
     ClassicEditor
         .create(document.querySelector('#content'), {
-            wordCount: {
-                onUpdate: stats => {
-                    // Mostrar aviso quando chegar a 80% do limite
-                    if (stats.characters > 52000) {
-                        document.querySelector('.ck-word-count').style.color = 'red';
-                    } else {
-                        document.querySelector('.ck-word-count').style.color = '';
-                    }
-                }
+            extraPlugins: [MyCustomUploadAdapterPlugin],
+            toolbar: {
+                items: [
+                    'heading', '|',
+                    'fontfamily', 'fontsize', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'alignment', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'indent', 'outdent', '|',
+                    'link', 'blockQuote', 'insertTable', 'imageUpload', '|',
+                    'undo', 'redo'
+                ]
+            },
+            image: {
+                toolbar: [
+                    'imageTextAlternative', '|',
+                    'imageStyle:alignLeft', 'imageStyle:alignCenter', 'imageStyle:alignRight'
+                ],
+                styles: [
+                    'alignLeft', 'alignCenter', 'alignRight'
+                ]
             }
         })
+        .then(editor => {
+            console.log('Editor inicializado com sucesso');
+            window.editor = editor;
+        })
         .catch(error => {
-            console.error(error);
+            console.error('Erro ao inicializar o editor:', error);
         });
 });
 </script>
 @endpush
-@endsection

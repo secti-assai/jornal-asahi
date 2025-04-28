@@ -6,12 +6,12 @@
         <div class="col-md-8 col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white py-3 text-center">
-                    <h4 class="mb-0">Login</h4>
+                    <h4 class="mb-0">Painel de Controle</h4>
                 </div>
                 <div class="card-body p-4 p-md-5">
                     <div class="text-center mb-4">
                         <div class="header-title mb-3">
-                            <span style="color: #1a237e; font-weight: bold; font-size: 1.5rem;">Asahi Shimbun</span>
+                            <span style="color: #1a237e; font-weight: bold; font-size: 1.5rem;">Login</span>
                         </div>
                         <p class="text-muted">Entre com suas credenciais para acessar o painel</p>
                     </div>

@@ -58,3 +58,8 @@ Route::get('/news/{news}', [NewsController::class, 'show'])->name('news.show');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Adicione junto com suas outras rotas
+Route::post('/ckeditor/upload', [App\Http\Controllers\CKEditorController::class, 'upload'])
+    ->name('ckeditor.upload')
+    ->middleware('web');  // Adiciona explicitamente o middleware 'web'

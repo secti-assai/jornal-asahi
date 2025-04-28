@@ -13,8 +13,8 @@
             --light-grey: #f8f9fa;
         }
         .brand-logo {
-            max-height: 60px; /* Aumentado de 40px para 60px */
-            margin-right: 15px;
+            max-height: 90px;
+            margin-right: 30px;
         }
         .header-title {
             font-family: 'Noto Sans JP', sans-serif;
@@ -79,7 +79,7 @@
         /* Melhorias para responsividade */
         @media (max-width: 768px) {
             .brand-logo {
-                max-height: 40px; /* Aumentado de 30px para 40px */
+                max-height: 80px; /* Aumentado de 30px para 40px */
             }
             .header-title {
                 font-size: 1rem; /* Aumentado de 0.9rem para 1rem */
@@ -107,15 +107,7 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
                 <!-- Logo do site com tamanho maior -->
-                <img src="{{ asset('storage/logo-asahi.png') }}" alt="Logo Asahi Shimbun" class="brand-logo">
-                <div class="d-flex flex-column align-items-start">
-                    <div class="header-title">
-                        <span class="japanese-text">朝日新聞</span>
-                    </div>
-                    <div style="font-size: 1rem; color: #555;">
-                        Asahi Shimbun
-                    </div>
-                </div>
+                <img src="{{ asset('storage/logo-full-asahi.png') }}" alt="Logo Asahi Shimbun" class="brand-logo">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -130,16 +122,7 @@
                         <a class="nav-link" href="{{ route('news.index') }}">Notícias</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#eventos">Eventos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#educacao">Educação</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#cultura">Cultura</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#galeria">Galeria</a>
+                        <a class="nav-link" href="https://valedosol.assai.pr.gov.br/" target="_blank" rel="noopener noreferrer"">Vale do Sol</a>
                     </li>
                 </ul>
                 <div class="d-flex">
@@ -187,7 +170,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4">
-                    <h5 class="mb-3">アサイ新聞</h5>
+                    <h5 class="mb-3">Asahi Shimbun</h5>
                     <p class="text-light">Jornal municipal administrado por estudantes do ensino médio e fundamental da cidade de Assaí, focado em notícias, cultura e eventos para os jovens da comunidade.</p>
                     <div class="mt-3">
                         <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
@@ -234,7 +217,7 @@
             <div class="row">
                 <div class="col-12 text-center">
                     <p class="mb-0">© {{ date('Y') }} Asahi Shimbun. Todos os direitos reservados.</p>
-                    <p class="small">Desenvolvido por estudantes de Assaí-PR</p>
+                    <p class="small">Desenvolvido pela Secretaria de Ciência, Tecnologia e Inovação.</p>
                 </div>
             </div>
         </div>
