@@ -10,13 +10,25 @@
             <p class="text-muted mb-4">Mantenha-se informado com as últimas notícias de Assaí</p>
             
             <div id="featuredNewsCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-indicators">
+                <!-- Indicadores para dispositivos móveis (visíveis apenas em mobile) -->
+                <div class="carousel-indicators mobile-indicators d-md-none" style="top: 10px; bottom: auto; margin-top: 0;">
+                    @foreach($featuredNews as $index => $item)
+                        <button type="button" data-bs-target="#featuredNewsCarousel" data-bs-slide-to="{{ $index }}" 
+                            class="{{ $index == 0 ? 'active' : '' }}" aria-current="{{ $index == 0 ? 'true' : 'false' }}" 
+                            aria-label="Slide {{ $index + 1 }}"
+                            style="background-color: rgba(255, 255, 255, 0.8); width: 30px; height: 3px; border-radius: 0;"></button>
+                    @endforeach
+                </div>
+
+                <!-- Indicadores para desktop (visíveis apenas em tablet e desktop) -->
+                <div class="carousel-indicators desktop-indicators d-none d-md-flex">
                     @foreach($featuredNews as $index => $item)
                         <button type="button" data-bs-target="#featuredNewsCarousel" data-bs-slide-to="{{ $index }}" 
                             class="{{ $index == 0 ? 'active' : '' }}" aria-current="{{ $index == 0 ? 'true' : 'false' }}" 
                             aria-label="Slide {{ $index + 1 }}"></button>
                     @endforeach
                 </div>
+
                 <div class="carousel-inner rounded overflow-hidden">
                     @foreach($featuredNews as $index => $item)
                         <div class="carousel-item {{ $index == 0 ? 'active' : '' }}" data-bs-interval="6000">
@@ -29,11 +41,11 @@
                                         <span class="text-white">Sem imagem disponível</span>
                                     </div>
                                 @endif
-                                <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                                <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.8)); pointer-events: none;">
                                     <div class="container">
                                         <h2 class="text-white mb-2">{{ $item->title }}</h2>
                                         <p class="text-white-50 mb-3">{{ Str::limit(strip_tags($item->content), 150) }}</p>
-                                        <a href="{{ route('news.show', $item) }}" class="btn btn-sm btn-primary">Ler matéria completa</a>
+                                        <a href="{{ route('news.show', $item) }}" class="btn btn-sm btn-primary" style="pointer-events: auto; position: relative; z-index: 100;">Ler matéria completa</a>
                                     </div>
                                 </div>
                             </div>
@@ -174,11 +186,41 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize Bootstrap carousel with custom settings
-        var myCarousel = document.querySelector('#featuredNewsCarousel')
+        var myCarousel = document.querySelector('#featuredNewsCarousel');
         var carousel = new bootstrap.Carousel(myCarousel, {
             interval: 5000,
             wrap: true,
-            touch: true
+            touch: true,
+            pause: 'hover'
+        });
+        
+        // Tratamento especial para os botões dentro do carousel
+        document.querySelectorAll('#featuredNewsCarousel .carousel-item a.btn').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            button.addEventListener('mouseenter', function() {
+                carousel.pause();
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                carousel.cycle();
+            });
+        });
+
+        // Observador de eventos para manter os indicadores sincronizados
+        myCarousel.addEventListener('slide.bs.carousel', function(event) {
+            const targetIndex = event.to;
+            
+            // Sincroniza os indicadores mobile e desktop
+            document.querySelectorAll('.carousel-indicators.mobile-indicators button').forEach(
+                (btn, idx) => btn.classList.toggle('active', idx === targetIndex)
+            );
+            
+            document.querySelectorAll('.carousel-indicators.desktop-indicators button').forEach(
+                (btn, idx) => btn.classList.toggle('active', idx === targetIndex)
+            );
         });
     });
 </script>

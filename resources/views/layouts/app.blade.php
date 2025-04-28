@@ -98,6 +98,70 @@
             font-weight: bold;
             color: #1a237e;
         }
+
+        /* Estilos personalizados */
+        .pagination {
+            margin-bottom: 0;
+        }
+        .page-item.active .page-link {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .page-link {
+            color: #0d6efd;
+            border-radius: 3px;
+            margin: 0 2px;
+        }
+        .page-link:hover {
+            color: #0a58ca;
+            background-color: #e9ecef;
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        /* Estilos para indicadores em desktop */
+        .carousel-indicators.desktop-indicators {
+            bottom: 20px;
+            z-index: 200;
+        }
+        
+        /* Estilos para indicadores em mobile */
+        .carousel-indicators.mobile-indicators {
+            z-index: 200;
+        }
+        
+        /* Estilos do botão para garantir que ele seja clicável */
+        #featuredNewsCarousel .carousel-item a.btn {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            pointer-events: auto;
+            position: relative;
+            z-index: 150;
+        }
+        
+        /* Efeito hover no botão */
+        #featuredNewsCarousel .carousel-item a.btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Ajustes responsivos para dispositivos móveis */
+        @media (max-width: 767.98px) {
+            /* Redução do espaço no gradiente para dispositivos móveis */
+            #featuredNewsCarousel .position-absolute.bottom-0 {
+                padding: 2rem 1rem !important;
+            }
+            
+            /* Ajuste os tamanhos de texto para dispositivos móveis */
+            #featuredNewsCarousel h2 {
+                font-size: 1.5rem;
+            }
+            
+            #featuredNewsCarousel p {
+                font-size: 0.875rem;
+                margin-bottom: 1rem !important;
+            }
+        }
     </style>
     <!-- Adicionar fontes para suporte japonês -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">

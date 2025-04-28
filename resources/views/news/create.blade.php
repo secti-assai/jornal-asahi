@@ -34,9 +34,10 @@
         </div>
         
         <div class="mb-3">
-            <label for="image" class="form-label">Imagem</label>
+            <label for="image" class="form-label">Imagem para o background</label>
             <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image" accept="image/jpeg,image/png,image/jpg,image/gif">
             <div class="form-text">Apenas imagens (JPG, PNG, GIF) são permitidas. Tamanho máximo: 2MB.</div>
+            <div class="form-text">Também recomendamos que a imagem seja em alta resolução, preferencialmente no formato 1920x1080, já que será utilizada como plano de fundo nas notícias.</div>
             @error('image')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror

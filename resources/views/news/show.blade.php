@@ -13,6 +13,14 @@
                 </ol>
             </nav>
 
+            <!-- Adicione logo após o breadcrumb -->
+            @if(!$news->approved)
+                <div class="alert alert-warning mb-4">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Esta notícia está aguardando aprovação e ainda não está visível publicamente.
+                </div>
+            @endif
+
             <!-- Article Header -->
             <header class="mb-4">
                 <h1 class="display-5 fw-bold mb-3">{{ $news->title }}</h1>
@@ -24,9 +32,15 @@
                     <div>
                         <div class="fw-bold">{{ $news->author->name }}</div>
                         <div class="text-muted">
-                            <span>Publicado em {{ $news->published_at->format('d/m/Y \à\s H:i') }}</span>
-                            @if($news->author_id !== $news->approved_by)
-                                <span class="ms-2">• Aprovado por {{ $news->approver->name ?? 'Admin' }}</span>
+                            @if($news->approved)
+                                <span>Publicado em {{ $news->published_at->format('d/m/Y \à\s H:i') }}</span>
+                                @if($news->approved_by && $news->author_id !== $news->approved_by)
+                                    <span class="ms-2">• Aprovado por {{ $news->approver->name ?? 'Admin' }}</span>
+                                @endif
+                            @else
+                                <span class="text-warning">
+                                    <i class="bi bi-clock-history"></i> Aguardando aprovação
+                                </span>
                             @endif
                         </div>
                     </div>

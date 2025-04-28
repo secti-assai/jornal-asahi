@@ -4,10 +4,10 @@
 <div class="container py-4">
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1 class="section-title">Dashboard</h1>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                <h1 class="section-title mb-3 mb-md-0">Dashboard</h1>
                 
-                <div>
+                <div class="d-flex flex-wrap gap-2">
                     @if(Auth::user()->isReporter() || Auth::user()->isApprover() || Auth::user()->isAdmin())
                         <a href="{{ route('news.create') }}" class="btn btn-primary">
                             <i class="bi bi-plus-lg me-1"></i> Nova Notícia
@@ -15,7 +15,7 @@
                     @endif
                     
                     @if(Auth::user()->isAdmin())
-                        <a href="{{ url('/admin/users') }}" class="btn btn-success ms-2">
+                        <a href="{{ url('/admin/users') }}" class="btn btn-success">
                             <i class="bi bi-people me-1"></i> Gerenciar Usuários
                         </a>
                     @endif
@@ -102,7 +102,38 @@
             @if($myNews->count() > 0)
                 @include('dashboard._news_table', ['news' => $myNews])
                 <div class="d-flex justify-content-center mt-4">
-                    {{ $myNews->appends(['pending_news' => request()->get('pending_news'), 'all_news' => request()->get('all_news')])->links() }}
+                    <nav aria-label="Navegação de páginas">
+                        <ul class="pagination pagination-md flex-wrap justify-content-center">
+                            {{-- Link "Anterior" --}}
+                            @if ($myNews->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $myNews->previousPageUrl() }}" aria-label="Anterior">&laquo;</a>
+                                </li>
+                            @endif
+
+                            {{-- Links numerados --}}
+                            @for ($i = 1; $i <= $myNews->lastPage(); $i++)
+                                <li class="page-item {{ ($i == $myNews->currentPage()) ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $myNews->appends(['pending_news' => request()->get('pending_news'), 'all_news' => request()->get('all_news')])->url($i) }}">{{ $i }}</a>
+                                </li>
+                            @endfor
+
+                            {{-- Link "Próximo" --}}
+                            @if ($myNews->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $myNews->nextPageUrl() }}" aria-label="Próximo">&raquo;</a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
                 </div>
             @else
                 <div class="alert alert-info">
@@ -124,7 +155,35 @@
             @if($pendingNews->count() > 0)
                 @include('dashboard._news_table', ['news' => $pendingNews])
                 <div class="d-flex justify-content-center mt-4">
-                    {{ $pendingNews->appends(['my_news' => request()->get('my_news'), 'all_news' => request()->get('all_news')])->links() }}
+                    <nav aria-label="Navegação de páginas">
+                        <ul class="pagination pagination-md flex-wrap justify-content-center">
+                            @if ($pendingNews->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $pendingNews->previousPageUrl() }}" aria-label="Anterior">&laquo;</a>
+                                </li>
+                            @endif
+
+                            @for ($i = 1; $i <= $pendingNews->lastPage(); $i++)
+                                <li class="page-item {{ ($i == $pendingNews->currentPage()) ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $pendingNews->url($i) }}">{{ $i }}</a>
+                                </li>
+                            @endfor
+
+                            @if ($pendingNews->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $pendingNews->nextPageUrl() }}" aria-label="Próximo">&raquo;</a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
                 </div>
             @else
                 <div class="alert alert-info">
@@ -145,7 +204,35 @@
             @if($allNews->count() > 0)
                 @include('dashboard._news_table', ['news' => $allNews])
                 <div class="d-flex justify-content-center mt-4">
-                    {{ $allNews->appends(['my_news' => request()->get('my_news'), 'pending_news' => request()->get('pending_news')])->links() }}
+                    <nav aria-label="Navegação de páginas">
+                        <ul class="pagination pagination-md flex-wrap justify-content-center">
+                            @if ($allNews->onFirstPage())
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $allNews->previousPageUrl() }}" aria-label="Anterior">&laquo;</a>
+                                </li>
+                            @endif
+
+                            @for ($i = 1; $i <= $allNews->lastPage(); $i++)
+                                <li class="page-item {{ ($i == $allNews->currentPage()) ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $allNews->url($i) }}">{{ $i }}</a>
+                                </li>
+                            @endfor
+
+                            @if ($allNews->hasMorePages())
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $allNews->nextPageUrl() }}" aria-label="Próximo">&raquo;</a>
+                                </li>
+                            @else
+                                <li class="page-item disabled">
+                                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                                </li>
+                            @endif
+                        </ul>
+                    </nav>
                 </div>
             @else
                 <div class="alert alert-info">
