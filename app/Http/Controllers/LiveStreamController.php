@@ -26,22 +26,33 @@ class LiveStreamController extends Controller
             'youtube_video_id' => 'required|string|max:255',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'is_active' => 'boolean',
             'start_time' => 'nullable|date',
             'end_time' => 'nullable|date|after_or_equal:start_time',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // If this stream is active, deactivate all others
-        if ($request->input('is_active', false)) {
+        // Preparar os dados
+        $data = [
+            'youtube_video_id' => $request->youtube_video_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'is_active' => $request->has('is_active') ? true : false
+        ];
+
+        // Se esta transmissão será ativada, desative todas as outras
+        if ($data['is_active']) {
             LiveStream::where('is_active', true)->update(['is_active' => false]);
         }
 
-        $liveStream = LiveStream::create($request->all());
-        return response()->json($liveStream, 201);
+        // Criar a transmissão
+        LiveStream::create($data);
+
+        return redirect()->route('dashboard')->with('success', 'Transmissão criada com sucesso!');
     }
 
     /**
@@ -60,27 +71,45 @@ class LiveStreamController extends Controller
         $liveStream = LiveStream::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'youtube_video_id' => 'sometimes|required|string|max:255',
-            'title' => 'sometimes|required|string|max:255',
+            'youtube_video_id' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'is_active' => 'boolean',
             'start_time' => 'nullable|date',
             'end_time' => 'nullable|date|after_or_equal:start_time',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // If this stream is being set to active, deactivate all others
-        if ($request->has('is_active') && $request->input('is_active') == true) {
-            LiveStream::where('id', '!=', $id)
-                ->where('is_active', true)
-                ->update(['is_active' => false]);
+        // Preparar os dados - garantir que is_active seja tratado corretamente
+        $data = $request->all();
+        $data['is_active'] = $request->has('is_active');
+
+        // Se esta transmissão será ativada, desative todas as outras
+        if ($data['is_active']) {
+            LiveStream::where('id', '!=', $id)->where('is_active', true)->update(['is_active' => false]);
         }
 
-        $liveStream->update($request->all());
-        return response()->json($liveStream);
+        $liveStream->update($data);
+
+        return redirect()->route('dashboard')->with('success', 'Transmissão atualizada com sucesso!');
+    }
+
+    /**
+     * Set specified live stream as active
+     */
+    public function activate($id)
+    {
+        // Desativar todas as transmissões ao vivo
+        LiveStream::where('is_active', true)->update(['is_active' => false]);
+
+        // Ativar a transmissão especificada
+        $liveStream = LiveStream::findOrFail($id);
+        $liveStream->is_active = true;
+        $liveStream->save();
+
+        return redirect()->route('dashboard')->with('success', 'Transmissão ativada com sucesso!');
     }
 
     /**
@@ -90,23 +119,8 @@ class LiveStreamController extends Controller
     {
         $liveStream = LiveStream::findOrFail($id);
         $liveStream->delete();
-        return response()->json(null, 204);
-    }
-
-    /**
-     * Set specified live stream as active
-     */
-    public function activate($id)
-    {
-        // Deactivate all live streams
-        LiveStream::where('is_active', true)->update(['is_active' => false]);
         
-        // Activate the specified live stream
-        $liveStream = LiveStream::findOrFail($id);
-        $liveStream->is_active = true;
-        $liveStream->save();
-        
-        return response()->json($liveStream);
+        return redirect()->route('dashboard')->with('success', 'Transmissão excluída com sucesso!');
     }
 
     /**

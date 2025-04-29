@@ -47,7 +47,7 @@ Route::middleware([AdminMiddleware::class])->group(function () {
     Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
-    // Rotas para livestreams
+    // Rotas para live streams (adicionar estas)
     Route::get('/admin/live-streams', [LiveStreamController::class, 'index'])->name('live-streams.index');
     Route::post('/admin/live-streams', [LiveStreamController::class, 'store'])->name('live-streams.store');
     Route::get('/admin/live-streams/{id}', [LiveStreamController::class, 'show'])->name('live-streams.show');

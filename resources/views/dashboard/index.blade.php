@@ -2,6 +2,20 @@
 
 @section('content')
 <div class="container py-4">
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
@@ -280,13 +294,15 @@
                                 <td>{{ $stream->start_time ? $stream->start_time->format('d/m/Y H:i') : 'Não definido' }}</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="#" class="btn btn-primary edit-stream" 
-                                           data-id="{{ $stream->id }}" data-bs-toggle="modal" data-bs-target="#liveStreamModal">
+                                        <button type="button" class="btn btn-primary edit-stream" 
+                                                data-id="{{ $stream->id }}" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#liveStreamModal">
                                             <i class="bi bi-pencil"></i>
-                                        </a>
+                                        </button>
                                         
                                         @if(!$stream->is_active)
-                                        <form action="{{ url('/admin/live-streams/'.$stream->id.'/activate') }}" method="POST" class="d-inline">
+                                        <form action="{{ route('live-streams.activate', $stream->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('PUT')
                                             <button type="submit" class="btn btn-success">
@@ -295,7 +311,7 @@
                                         </form>
                                         @endif
                                         
-                                        <form action="{{ url('/admin/live-streams/'.$stream->id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('live-streams.destroy', $stream->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger" 
@@ -324,42 +340,38 @@
     <!-- Modal para transmissões ao vivo -->
     <div class="modal fade" id="liveStreamModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
+            <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTitle">Nova Transmissão ao Vivo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="liveStreamForm" action="{{ url('/admin/live-streams') }}" method="POST">
+                
+                <form id="liveStreamForm" method="POST" action="{{ route('live-streams.store') }}">
                     @csrf
                     <input type="hidden" name="_method" id="method" value="POST">
-                    <input type="hidden" name="stream_id" id="stream_id" value="">
                     
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="youtube_video_id" class="form-label">ID do Vídeo YouTube</label>
                             <input type="text" class="form-control" id="youtube_video_id" name="youtube_video_id" required>
-                            <div class="form-text">Ex: dQw4w9WgXcQ (encontrado na URL: youtube.com/watch?v=dQw4w9WgXcQ)</div>
+                            <small class="form-text text-muted">Ex: dQw4w9WgXcQ (ID do vídeo no YouTube)</small>
                         </div>
-                        
                         <div class="mb-3">
                             <label for="title" class="form-label">Título</label>
                             <input type="text" class="form-control" id="title" name="title" required>
                         </div>
-                        
                         <div class="mb-3">
                             <label for="description" class="form-label">Descrição</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                         </div>
-                        
                         <div class="mb-3">
                             <label for="start_time" class="form-label">Data/Hora de Início</label>
                             <input type="datetime-local" class="form-control" id="start_time" name="start_time">
                         </div>
-                        
-                        <div class="form-check form-switch mb-3">
+                        <div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1">
                             <label class="form-check-label" for="is_active">
-                                Ativar esta transmissão (desativa qualquer outra ativa)
+                                Ativar esta transmissão (desativa outras)
                             </label>
                         </div>
                     </div>
@@ -376,56 +388,68 @@
 
 @push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handle edit button clicks for live streams
-        const editButtons = document.querySelectorAll('.edit-stream');
-        if (editButtons.length > 0) {
-            editButtons.forEach(function(button) {
-                button.addEventListener('click', function() {
-                    const streamId = this.getAttribute('data-id');
+document.addEventListener('DOMContentLoaded', function() {
+    const editButtons = document.querySelectorAll('.edit-stream');
+    const newButton = document.querySelector('button[data-bs-target="#liveStreamModal"]:not(.edit-stream)');
+    const form = document.getElementById('liveStreamForm');
+    const methodField = document.getElementById('method');
+
+    // Tratar o clique em botões de edição
+    editButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            const streamId = this.getAttribute('data-id');
+            
+            // Alterar o título do modal
+            document.getElementById('modalTitle').textContent = 'Editar Transmissão ao Vivo';
+            
+            // Configurar o formulário para atualização
+            form.action = `{{ url('/admin/live-streams') }}/${streamId}`;
+            methodField.value = 'PUT';
+            
+            // Limpar campos antes de carregar novos dados
+            document.getElementById('youtube_video_id').value = '';
+            document.getElementById('title').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('start_time').value = '';
+            document.getElementById('is_active').checked = false;
+            
+            // Carregar os dados da transmissão
+            fetch(`{{ url('/admin/live-streams') }}/${streamId}`)
+                .then(response => response.json())
+                .then(stream => {
+                    document.getElementById('youtube_video_id').value = stream.youtube_video_id;
+                    document.getElementById('title').value = stream.title;
+                    document.getElementById('description').value = stream.description || '';
                     
-                    // Fetch stream data via API
-                    fetch(`/admin/live-streams/${streamId}`)
-                        .then(response => response.json())
-                        .then(stream => {
-                            document.getElementById('modalTitle').textContent = 'Editar Transmissão ao Vivo';
-                            document.getElementById('method').value = 'PUT';
-                            document.getElementById('stream_id').value = stream.id;
-                            document.getElementById('youtube_video_id').value = stream.youtube_video_id;
-                            document.getElementById('title').value = stream.title;
-                            document.getElementById('description').value = stream.description || '';
-                            
-                            if (stream.start_time) {
-                                const date = new Date(stream.start_time);
-                                const formattedDate = date.toISOString().slice(0, 16);
-                                document.getElementById('start_time').value = formattedDate;
-                            } else {
-                                document.getElementById('start_time').value = '';
-                            }
-                            
-                            document.getElementById('is_active').checked = stream.is_active;
-                            document.getElementById('liveStreamForm').action = `/admin/live-streams/${stream.id}`;
-                        })
-                        .catch(error => {
-                            console.error('Error fetching live stream data:', error);
-                            alert('Erro ao carregar dados da transmissão');
-                        });
+                    if (stream.start_time) {
+                        const startTime = new Date(stream.start_time);
+                        document.getElementById('start_time').value = startTime.toISOString().slice(0, 16);
+                    }
+                    
+                    document.getElementById('is_active').checked = stream.is_active;
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Erro ao carregar dados da transmissão');
                 });
-            });
-        }
-        
-        // Reset form when creating new live stream
-        const newButton = document.querySelector('button[data-bs-target="#liveStreamModal"]:not(.edit-stream)');
-        if (newButton) {
-            newButton.addEventListener('click', function() {
-                document.getElementById('modalTitle').textContent = 'Nova Transmissão ao Vivo';
-                document.getElementById('liveStreamForm').reset();
-                document.getElementById('method').value = 'POST';
-                document.getElementById('stream_id').value = '';
-                document.getElementById('liveStreamForm').action = '/admin/live-streams';
-            });
-        }
+        });
     });
+
+    // Tratar o clique no botão de nova transmissão
+    if (newButton) {
+        newButton.addEventListener('click', function() {
+            // Resetar o formulário
+            form.reset();
+            
+            // Alterar o título do modal
+            document.getElementById('modalTitle').textContent = 'Nova Transmissão ao Vivo';
+            
+            // Configurar o formulário para criação
+            form.action = "{{ url('/admin/live-streams') }}";
+            methodField.value = 'POST';
+        });
+    }
+});
 </script>
 @endpush
 @endsection

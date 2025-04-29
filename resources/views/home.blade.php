@@ -182,6 +182,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Seção: Equipe de Repórteres Mirins -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2 class="section-title h4 mb-1">
+                        <i class="bi bi-people-fill me-1"></i>
+                        Nossa Equipe de Repórteres
+                    </h2>
+                    <p class="text-muted small mb-0">
+                        Estudantes do ensino fundamental e médio levando informação de qualidade para toda a comunidade.
+                    </p>
+                </div>
+            </div>
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <img src="{{ asset('storage/reporteres.jpg') }}" 
+                     class="img-fluid w-100" 
+                     alt="Equipe de Repórteres Mirins de Assaí" 
+                     style="max-height: 450px; object-fit: cover;">
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal da Galeria -->
@@ -243,13 +266,14 @@
     
     /* Em dispositivos móveis, sempre mostrar a sobreposição para melhor UX */
     @media (max-width: 767px) {
-        .card-img-overlay {
-            opacity: 1;
-            padding: 8px;
+        .section-title {
+            font-size: 1.25rem;
         }
-        
-        .gallery-img {
-            height: 100px; /* Imagens um pouco menores em dispositivos móveis */
+        .text-muted {
+            font-size: 0.9rem;
+        }
+        .card img {
+            max-height: 300px;
         }
     }
     
@@ -284,6 +308,25 @@
             max-height: none;
         }
     }
+    
+    /* Estilo para a seção de repórteres mirins */
+.reporter-team-section img {
+    transition: transform 1.5s ease;
+}
+
+.reporter-team-section:hover img {
+    transform: scale(1.03);
+}
+
+@media (max-width: 767px) {
+    .reporter-team-section h2 {
+        font-size: 1.5rem;
+    }
+    
+    .reporter-team-section p {
+        font-size: 0.85rem;
+    }
+}
 </style>
 @endpush
 
