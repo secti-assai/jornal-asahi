@@ -60,7 +60,7 @@
                                                 <small class="text-muted">{{ $item->published_at->format('d/m/Y H:i') }}</small>
                                             </div>
                                         </div>
-                                        <p class="card-text flex-grow-1">{{ Str::limit(strip_tags($item->content), 300) }}</p>
+                                        <p class="card-text flex-grow-1">{{ Str::limit(html_entity_decode(strip_tags($item->content)), 300) }}</p>
                                         <a href="{{ route('news.show', $item) }}" class="btn btn-primary mt-auto">
                                             Ler mais <i class="bi bi-arrow-right ms-1"></i>
                                         </a>
@@ -91,7 +91,7 @@
                                         <small class="text-muted">{{ $item->published_at->format('d/m/Y') }}</small>
                                     </div>
                                 </div>
-                                <p class="card-text">{{ Str::limit(strip_tags($item->content), 100) }}</p>
+                                <p class="card-text">{{ Str::limit(html_entity_decode(strip_tags($item->content)), 100) }}</p>
                             </div>
                             <div class="card-footer bg-white border-top-0">
                                 <a href="{{ route('news.show', $item) }}" class="btn btn-outline-primary btn-sm">
