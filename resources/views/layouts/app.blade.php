@@ -199,9 +199,46 @@
             box-shadow: none;
             border-color: transparent;
         }
+
+        /* Torna as imagens do conteúdo responsivas */
+        .news-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1rem 0;
+        }
+        
+        /* Opcional: Adiciona uma borda e sombra suave às imagens */
+        .news-content img {
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Centraliza imagens pequenas e adiciona espaço em volta */
+        @media (min-width: 768px) {
+            .news-content img:not([style*="width"]), 
+            .news-content img[style*="width:"][style*="px"][style*="max-width: 500px"] {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+        
+        /* Estilos para legendas de imagem (se existirem) */
+        .news-content figure {
+            max-width: 100%;
+            margin: 1.5rem 0;
+        }
+        
+        .news-content figcaption {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+            padding: 0.5rem 0;
+        }
     </style>
     <!-- Adicionar fontes para suporte japonês -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    @stack('styles')
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light navbar-custom mb-4">
@@ -274,16 +311,16 @@
                     <h5 class="mb-3">Jornal Asahi</h5>
                     <p class="text-light">Jornal municipal administrado por estudantes do ensino médio e fundamental da cidade de Assaí, focado em notícias, cultura e eventos para os jovens da comunidade.</p>
                     <div class="mt-3">
-                        <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
-                        <a href="https://www.instagram.com/valedosolpr/" class="text-light me-3"><i class="bi bi-instagram"></i></a>
-                        <a href="https://www.youtube.com/@valedosolpr" class="text-light"><i class="bi bi-youtube"></i></a>
+                        <a href="https://www.facebook.com/prefeituraassai/" target="_blank" class="text-light me-3"><i class="bi bi-facebook"></i></a>
+                        <a href="https://www.instagram.com/valedosolpr/" target="_blank" class="text-light me-3"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.youtube.com/@valedosolpr" target="_blank" class="text-light"><i class="bi bi-youtube"></i></a>
                     </div>
                 </div>
                 <div class="col-md-2 mb-4">
                     <h5 class="mb-3">Sobre</h5>
                     <ul class="list-unstyled">
-                        <li><a href="https://valedosol.assai.pr.gov.br/" class="text-light text-decoration-none mb-2 d-block">Nossa História</a></li>
-                        <li><a href="https://valedosol.assai.pr.gov.br/" class="text-light text-decoration-none mb-2 d-block">Contato</a></li>
+                        <li><a href="https://valedosol.assai.pr.gov.br/" target="_blank" class="text-light text-decoration-none mb-2 d-block">Nossa História</a></li>
+                        <li><a href="https://valedosol.assai.pr.gov.br/" target="_blank" class="text-light text-decoration-none mb-2 d-block">Contato</a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 mb-4">
@@ -305,7 +342,7 @@
                 <div class="col-md-2 mb-4">
                     <h5 class="mb-3">Parceiros</h5>
                     <ul class="list-unstyled">
-                        <li><a href="https://www.assai.pr.gov.br/" class="text-light text-decoration-none mb-2 d-block">Prefeitura</a></li>
+                        <li><a href="https://www.assai.pr.gov.br/" target="_blank" class="text-light text-decoration-none mb-2 d-block">Prefeitura</a></li>
                     </ul>
                 </div>
             </div>

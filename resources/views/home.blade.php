@@ -44,7 +44,7 @@
                                 <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.8)); pointer-events: none;">
                                     <div class="container">
                                         <h2 class="text-white mb-2">{{ $item->title }}</h2>
-                                        <p class="text-white-50 mb-3">{{ Str::limit(strip_tags($item->content), 150) }}</p>
+                                        <p class="text-white-50 mb-3">{{ Str::limit(html_entity_decode(strip_tags($item->content)), 150) }}</p>
                                         <a href="{{ route('news.show', $item) }}" class="btn btn-sm btn-primary" style="pointer-events: auto; position: relative; z-index: 100;">Ler matéria completa</a>
                                     </div>
                                 </div>

@@ -63,10 +63,8 @@
             @endif
 
             <!-- Article Content -->
-            <div class="news-content mb-5">
-                <div class="fs-5 lh-lg">
-                    {!! $news->content !!}
-                </div>
+            <div class="news-content">
+                {!! $news->content !!}
             </div>
 
             <!-- Social Share -->
@@ -159,3 +157,117 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Seleciona todas as imagens dentro do conteúdo da notícia e a imagem destacada
+        const contentImages = document.querySelectorAll('.news-content img');
+        const featuredImage = document.querySelector('.figure-img');
+        
+        // Cria modal para visualização de imagens
+        const modalHTML = `
+            <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-xl">
+                    <div class="modal-content bg-dark text-white border-0">
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title" id="imageModalLabel">Visualização da imagem</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body text-center p-0">
+                            <img src="" class="img-fluid" id="modalImage" alt="Imagem ampliada">
+                            <div class="p-3">
+                                <p id="imageCaption" class="small text-light"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Adiciona o HTML da modal ao final do documento
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Cria a referência do objeto modal
+        const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+        
+        // Função para abrir a modal com a imagem clicada
+        function openImageModal(imgSrc, altText) {
+            const modalImage = document.getElementById('modalImage');
+            const imageCaption = document.getElementById('imageCaption');
+            
+            // Define a fonte da imagem na modal
+            modalImage.src = imgSrc;
+            
+            // Define a legenda da imagem na modal
+            imageCaption.textContent = altText || 'Imagem da notícia';
+            
+            // Abre a modal
+            imageModal.show();
+        }
+        
+        // Adiciona evento de clique à imagem destacada se existir
+        if (featuredImage) {
+            featuredImage.style.cursor = 'zoom-in';
+            featuredImage.addEventListener('click', function() {
+                openImageModal(this.src, this.alt);
+            });
+        }
+        
+        // Adiciona evento de clique a todas as imagens do conteúdo
+        contentImages.forEach(img => {
+            img.style.cursor = 'zoom-in';
+            img.addEventListener('click', function() {
+                openImageModal(this.src, this.alt);
+            });
+            
+            // Adiciona classe visual de hover para indicar que é clicável
+            img.classList.add('img-zoomable');
+        });
+    });
+</script>
+@endpush
+
+@push('styles')
+<style>
+    /* Estilo para indicar imagens clicáveis */
+    .img-zoomable {
+        transition: all 0.3s ease;
+    }
+    
+    .img-zoomable:hover {
+        opacity: 0.9;
+        transform: scale(1.02);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+    }
+    
+    /* Estilização para a modal de imagem */
+    #imageModal .modal-xl {
+        max-width: 90%;
+    }
+    
+    #imageModal .modal-content {
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+    
+    #imageModal .modal-body {
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #modalImage {
+        max-height: 80vh;
+        object-fit: contain;
+    }
+    
+    @media (max-width: 768px) {
+        #imageModal .modal-xl {
+            max-width: 95%;
+            margin: 0.5rem;
+        }
+    }
+</style>
+@endpush
