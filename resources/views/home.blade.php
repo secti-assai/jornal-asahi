@@ -13,7 +13,7 @@
                         <p class="text-muted small mb-0">Mantenha-se informado com as últimas notícias</p>
                     </div>
                     <a href="{{ route('news.index') }}" class="text-decoration-none text-primary d-none d-md-block small">
-                        Ver todas <i class="bi bi-arrow-right"></i>
+                        Ver todas as notícias <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
                 
@@ -141,7 +141,7 @@
                     <p class="text-muted small mb-0">Visualize todas as imagens das notícias em um só lugar</p>
                 </div>
                 <a href="{{ route('gallery.index') }}" class="text-decoration-none text-primary d-none d-md-block small">
-                    Ver todas <i class="bi bi-arrow-right"></i>
+                    Ver todas as imagens <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
             

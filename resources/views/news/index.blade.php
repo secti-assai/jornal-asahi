@@ -53,8 +53,15 @@
                                         </div>
                                         <h3 class="card-title mb-3">{{ $item->title }}</h3>
                                         <div class="d-flex align-items-center mb-3">
-                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($item->author->name) }}&background=random" 
-                                                class="rounded-circle me-2" alt="{{ $item->author->name }}" width="30" height="30">
+                                            @if($item->author->profile_image)
+                                                <img src="{{ asset('storage/' . $item->author->profile_image) }}" 
+                                                    class="rounded-circle me-2" alt="{{ $item->author->name }}" 
+                                                    width="30" height="30" style="object-fit: cover;">
+                                            @else
+                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($item->author->name) }}&background=random" 
+                                                    class="rounded-circle me-2" alt="{{ $item->author->name }}" 
+                                                    width="30" height="30">
+                                            @endif
                                             <div>
                                                 <small class="d-block">{{ $item->author->name }}</small>
                                                 <small class="text-muted">{{ $item->published_at->format('d/m/Y H:i') }}</small>
@@ -84,8 +91,15 @@
                             <div class="card-body">
                                 <h5 class="card-title mb-3">{{ $item->title }}</h5>
                                 <div class="d-flex align-items-center mb-3">
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($item->author->name) }}&background=random" 
-                                        class="rounded-circle me-2" alt="{{ $item->author->name }}" width="24" height="24">
+                                    @if($item->author->profile_image)
+                                        <img src="{{ asset('storage/' . $item->author->profile_image) }}" 
+                                            class="rounded-circle me-2" alt="{{ $item->author->name }}" 
+                                            width="24" height="24" style="object-fit: cover;">
+                                    @else
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($item->author->name) }}&background=random" 
+                                            class="rounded-circle me-2" alt="{{ $item->author->name }}" 
+                                            width="24" height="24">
+                                    @endif
                                     <div>
                                         <small class="d-block text-muted">{{ $item->author->name }}</small>
                                         <small class="text-muted">{{ $item->published_at->format('d/m/Y') }}</small>

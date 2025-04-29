@@ -312,7 +312,7 @@
                     <p class="text-light">Jornal municipal administrado por estudantes do ensino médio e fundamental da cidade de Assaí, focado em notícias, cultura e eventos para os jovens da comunidade.</p>
                     <div class="mt-3">
                         <a href="https://www.facebook.com/prefeituraassai/" target="_blank" class="text-light me-3"><i class="bi bi-facebook"></i></a>
-                        <a href="https://www.instagram.com/valedosolpr/" target="_blank" class="text-light me-3"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.instagram.com/jornal.asahi/" target="_blank" class="text-light me-3"><i class="bi bi-instagram"></i></a>
                         <a href="https://www.youtube.com/@valedosolpr" target="_blank" class="text-light"><i class="bi bi-youtube"></i></a>
                     </div>
                 </div>

@@ -70,7 +70,7 @@
             <!-- Social Share -->
             @php
                 $url = urlencode(url()->current()); // Gera o link atual da página codificado
-                $title = urlencode($noticia->titulo ?? 'Confira esta notícia'); // ou outro campo do modelo
+                $title = urlencode($news->title ?? 'Confira esta notícia'); // Corrigido de $noticia->titulo para $news->title
             @endphp
 
             <!-- Social Share -->
