@@ -83,8 +83,8 @@
                     </a>
                 </div>
                 
-                <div class="card shadow-sm border-0 overflow-hidden h-100 mt-2">
-                    <div class="ratio ratio-16x9">
+                <div class="card shadow-sm border-0 overflow-hidden mt-2 live-stream-card">
+                    <div class="ratio ratio-16x9 live-stream-container">
                         <iframe 
                             src="https://www.youtube.com/embed/{{ $activeLiveStream->youtube_video_id }}?autoplay=0&rel=0" 
                             title="{{ $activeLiveStream->title }}" 
@@ -92,12 +92,12 @@
                             allowfullscreen>
                         </iframe>
                     </div>
-                    <div class="card-body p-3">
+                    <div class="card-body p-2 p-md-3">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <h3 class="card-title h6 mb-0">{{ Str::limit($activeLiveStream->title, 40) }}</h3>
                             <span class="badge bg-danger"><i class="bi bi-circle-fill me-1"></i> AO VIVO</span>
                         </div>
-                        <div class="d-flex align-items-center mb-2">
+                        <div class="d-flex align-items-center mb-2 small">
                             <i class="bi bi-calendar-event me-1"></i>
                             <small class="text-muted">{{ date('d/m/Y', strtotime($activeLiveStream->start_time)) }}</small>
                         </div>
@@ -118,7 +118,7 @@
                         <p class="text-muted small mb-0">Acompanhe nossas transmissões quando disponíveis</p>
                     </div>
                 </div>
-                <div class="card shadow-sm border-0 overflow-hidden h-100 mt-2 bg-light">
+                <div class="card shadow-sm border-0 overflow-hidden mt-2 bg-light live-stream-card">
                     <div class="card-body p-4 text-center">
                         <i class="bi bi-camera-video-off text-muted mb-3" style="font-size: 2rem;"></i>
                         <h3 class="h6 mb-2">Nenhuma transmissão ao vivo no momento</h3>
@@ -174,10 +174,10 @@
                 @endif
             </div>
             
-            <!-- Link para galeria completa -->
-            <div class="d-flex justify-content-end mt-2">
-                <a href="{{ route('gallery.index') }}" class="text-decoration-none text-primary small">
-                    Ver todas <i class="bi bi-arrow-right"></i>
+            <!-- Link para galeria completa - APENAS para mobile -->
+            <div class="d-flex justify-content-center mt-3 d-md-none">
+                <a href="{{ route('gallery.index') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-images me-1"></i> Ver galeria completa
                 </a>
             </div>
         </div>
@@ -212,6 +212,7 @@
         cursor: pointer;
         transition: all 0.3s ease;
         overflow: hidden;
+        border-radius: 6px;
     }
     
     .gallery-card:hover {
@@ -240,9 +241,48 @@
         opacity: 1;
     }
     
+    /* Em dispositivos móveis, sempre mostrar a sobreposição para melhor UX */
+    @media (max-width: 767px) {
+        .card-img-overlay {
+            opacity: 1;
+            padding: 8px;
+        }
+        
+        .gallery-img {
+            height: 100px; /* Imagens um pouco menores em dispositivos móveis */
+        }
+    }
+    
     #galleryModalImage {
         max-height: 70vh;
         object-fit: contain;
+    }
+    
+    /* Estilos para limitar o tamanho do box de transmissão ao vivo */
+    .live-stream-card {
+        max-height: 350px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .live-stream-container {
+        height: 0;
+        padding-bottom: 56.25%; /* Proporção 16:9 */
+        max-height: 200px;
+    }
+    
+    .live-stream-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    
+    @media (max-width: 991px) {
+        .live-stream-card {
+            max-height: none;
+        }
     }
 </style>
 @endpush
@@ -290,6 +330,13 @@
             modalTitle.textContent = newsTitle;
             modalLink.href = newsUrl;
         });
+        
+        // Tratamento especial para dispositivos touch/mobile
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.gallery-card').forEach(function(card) {
+                card.classList.add('touch-device');
+            });
+        }
     });
 </script>
 @endpush
