@@ -171,7 +171,7 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}">
                 <!-- Logo do site com tamanho maior -->
-                <img src="{{ asset('storage/logo-full-asahi.png') }}" alt="Logo Asahi Shimbun" class="brand-logo">
+                <img src="{{ asset('storage/jornal-asahi.png') }}" alt="Logo Jornal Asahi" class="brand-logo">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>

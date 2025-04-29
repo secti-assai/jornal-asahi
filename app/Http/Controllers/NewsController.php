@@ -24,7 +24,14 @@ class NewsController extends Controller
             abort(404);
         }
         
-        return view('news.show', compact('news'));
+        // Buscar as últimas 3 notícias publicadas que não sejam a notícia atual
+        $latestNews = News::where('id', '!=', $news->id)
+            ->where('approved', true)
+            ->orderBy('published_at', 'desc')
+            ->take(3)
+            ->get();
+        
+        return view('news.show', compact('news', 'latestNews'));
     }
 
     public function create()

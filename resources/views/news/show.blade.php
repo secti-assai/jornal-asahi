@@ -64,21 +64,31 @@
             </div>
 
             <!-- Social Share -->
+            @php
+                $url = urlencode(url()->current()); // Gera o link atual da página codificado
+                $title = urlencode($noticia->titulo ?? 'Confira esta notícia'); // ou outro campo do modelo
+            @endphp
+
+            <!-- Social Share -->
             <div class="d-flex align-items-center py-4 border-top border-bottom mb-5">
                 <span class="me-3">Compartilhar:</span>
-                <a href="#" class="btn btn-sm btn-outline-primary rounded-circle me-2" title="Compartilhar no Facebook">
+
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ $url }}"
+                class="btn btn-sm btn-outline-primary rounded-circle me-2" title="Compartilhar no Facebook" target="_blank">
                     <i class="bi bi-facebook"></i>
                 </a>
-                <a href="#" class="btn btn-sm btn-outline-info rounded-circle me-2" title="Compartilhar no Twitter">
-                    <i class="bi bi-twitter-x"></i>
-                </a>
-                <a href="#" class="btn btn-sm btn-outline-success rounded-circle me-2" title="Compartilhar no WhatsApp">
+
+                <a href="https://wa.me/?text={{ $title }}%20{{ $url }}"
+                class="btn btn-sm btn-outline-success rounded-circle me-2" title="Compartilhar no WhatsApp" target="_blank">
                     <i class="bi bi-whatsapp"></i>
                 </a>
-                <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle" title="Compartilhar por Email">
+
+                <a href="mailto:?subject={{ $title }}&body=Veja%20essa%20notícia:%20{{ $url }}"
+                class="btn btn-sm btn-outline-secondary rounded-circle" title="Compartilhar por Email" target="_blank">
                     <i class="bi bi-envelope"></i>
                 </a>
             </div>
+
 
             <!-- Admin Actions -->
             @auth
@@ -105,24 +115,38 @@
                     @endif
                 </div>
             @endauth
-            
-            <!-- Related News -->
-            <div class="related-news">
-                <h3 class="h5 section-title mb-4">Notícias Relacionadas</h3>
+
+            <!-- Últimas Notícias -->
+            <div class="latest-news">
+                <h3 class="h5 section-title mb-4">Últimas Notícias</h3>
                 
                 <div class="row row-cols-1 row-cols-md-3 g-4">
-                    @for ($i = 0; $i < 3; $i++)
+                    @forelse($latestNews as $latestItem)
                         <div class="col">
                             <div class="card h-100 border-0 shadow-sm">
-                                <div class="bg-secondary" style="height: 150px;"></div>
+                                @if($latestItem->image)
+                                    <img src="{{ asset('storage/' . $latestItem->image) }}" class="card-img-top" alt="{{ $latestItem->title }}" 
+                                         style="height: 150px; object-fit: cover;">
+                                @else
+                                    <div class="bg-secondary" style="height: 150px;"></div>
+                                @endif
                                 <div class="card-body">
-                                    <h5 class="card-title">Notícia relacionada exemplo</h5>
-                                    <p class="card-text small">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                    <a href="#" class="btn btn-sm btn-outline-primary">Ler mais</a>
+                                    <h5 class="card-title">{{ Str::limit($latestItem->title, 40) }}</h5>
+                                    <p class="card-text small">{{ Str::limit(strip_tags($latestItem->content), 80) }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <a href="{{ route('news.show', $latestItem) }}" class="btn btn-sm btn-outline-primary">Ler mais</a>
+                                        <small class="text-muted">{{ $latestItem->published_at->format('d/m/Y') }}</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    @endfor
+                    @empty
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                Não há outras notícias publicadas no momento.
+                            </div>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </div>
