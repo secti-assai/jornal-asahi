@@ -109,54 +109,45 @@
     @endif
 
     <!-- Últimas Notícias em Grid -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="section-title m-0">Últimas Notícias</h2>
-                <a href="{{ route('news.index') }}" class="text-decoration-none text-primary">Ver todas <i class="bi bi-arrow-right"></i></a>
-            </div>
-        </div>
-    </div>
-
     @if($latestNews && $latestNews->count() > 0)
-    <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
-        @foreach($latestNews as $item)
-        <div class="col">
-            <div class="card h-100 border-0 shadow-sm">
-                @if($item->image)
-                    <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" alt="{{ $item->title }}" 
-                        style="height: 200px; object-fit: cover;">
-                @else
-                    <div class="bg-light text-center p-4">
-                        <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
-                    </div>
-                @endif
-                <div class="card-body">
-                    <h5 class="card-title mb-3">{{ $item->title }}</h5>
-                    <div class="d-flex align-items-center mb-3">
-                        {!! App\Helpers\UserHelper::getAvatarHtml($item->author, 30, 'rounded-circle me-2') !!}
-                        <div>
-                            <small class="d-block text-muted">{{ $item->author->name }}</small>
-                            <small class="text-muted">{{ $item->published_at ? $item->published_at->format('d/m/Y') : 'Não publicado' }}</small>
+        <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+            @foreach($latestNews as $item)
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        @if($item->image)
+                            <img src="{{ asset('storage/' . $item->image) }}" class="card-img-top" alt="{{ $item->title }}" 
+                                 style="height: 200px; object-fit: cover;">
+                        @else
+                            <div class="bg-light text-center p-4">
+                                <i class="bi bi-image text-secondary" style="font-size: 3rem;"></i>
+                            </div>
+                        @endif
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">{{ $item->title }}</h5>
+                            <div class="d-flex align-items-center mb-3">
+                                {!! App\Helpers\UserHelper::getAvatarHtml($item->author, 30, 'rounded-circle me-2') !!}
+                                <div>
+                                    <small class="d-block text-muted">{{ $item->author->name }}</small>
+                                    <small class="text-muted">{{ $item->published_at ? $item->published_at->format('d/m/Y') : 'Não publicado' }}</small>
+                                </div>
+                            </div>
+                            <p class="card-text">{{ Str::limit(strip_tags($item->content), 100) }}</p>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <a href="{{ route('news.show', $item) }}" class="btn btn-outline-primary w-100">Ler mais</a>
                         </div>
                     </div>
-                    <p class="card-text">{{ Str::limit(strip_tags($item->content), 100) }}</p>
                 </div>
-                <div class="card-footer bg-white border-top-0">
-                    <a href="{{ route('news.show', $item) }}" class="btn btn-outline-primary w-100">Ler mais</a>
-                </div>
-            </div>
+            @endforeach
         </div>
-        @endforeach
-    </div>
 
-    <div class="d-flex justify-content-center mb-5">
-        {{ $latestNews->links() }}
-    </div>
-    @else
-    <div class="alert alert-info">
-        Não há notícias publicadas no momento.
-    </div>
+        <!-- Paginação -->
+        <div class="d-flex justify-content-center mt-4">
+            {{ $latestNews->links('vendor.pagination.custom') }}
+        </div>
+
+        <!-- Espaço adicional -->
+        <div class="mb-5"></div>
     @endif
 
     <!-- Seja um Repórter Banner -->
