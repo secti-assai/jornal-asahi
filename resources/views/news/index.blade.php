@@ -2,21 +2,32 @@
 
 @section('content')
 <div class="container py-4">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1 class="section-title">Últimas Notícias</h1>
-                
-                <form class="d-flex">
-                    <div class="input-group">
-                        <input type="search" class="form-control" placeholder="Buscar notícias..." aria-label="Buscar">
-                        <button class="btn btn-outline-primary" type="button"><i class="bi bi-search"></i></button>
-                    </div>
-                </form>
-            </div>
+    <div class="row justify-content-between align-items-center mb-4">
+        <div class="col-lg-6">
+            <h1 class="section-title mb-3 mb-lg-0">Últimas Notícias</h1>
+        </div>
+        <div class="col-lg-4">
+            <form action="{{ route('news.index') }}" method="GET" class="search-form">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search" placeholder="Buscar notícias..." 
+                           value="{{ request('search') }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-
+    
+    <!-- Mostrar resultados da pesquisa, se houver -->
+    @if(request('search'))
+        <div class="alert alert-info">
+            Resultados da pesquisa para: <strong>{{ request('search') }}</strong>
+            <a href="{{ route('news.index') }}" class="float-end">Limpar pesquisa</a>
+        </div>
+    @endif
+    
+    <!-- Restante do código da view para exibir as notícias -->
     @if($news->count() > 0)
         <div class="row mb-5">
             @foreach($news as $index => $item)

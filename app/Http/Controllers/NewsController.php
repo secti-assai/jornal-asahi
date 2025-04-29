@@ -9,11 +9,23 @@ use Illuminate\Support\Facades\Storage;
 
 class NewsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $news = News::where('approved', true)
-            ->orderBy('published_at', 'desc')
-            ->paginate(10);
+        $query = News::where('approved', true);
+        
+        // Verificar se existe um termo de pesquisa
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            
+            // Pesquisa no título e conteúdo
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('title', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('content', 'like', '%' . $searchTerm . '%');
+            });
+        }
+        
+        // Ordenar por data de publicação (mais recentes primeiro)
+        $news = $query->orderBy('published_at', 'desc')->paginate(10);
         
         return view('news.index', compact('news'));
     }

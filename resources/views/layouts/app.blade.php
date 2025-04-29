@@ -162,6 +162,28 @@
                 margin-bottom: 1rem !important;
             }
         }
+
+        .search-form .input-group {
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .search-form .form-control {
+            border-radius: 30px 0 0 30px;
+            border: none;
+            padding: 10px 15px;
+        }
+
+        .search-form .btn {
+            border-radius: 0 30px 30px 0;
+            padding: 10px 20px;
+        }
+
+        .search-form .form-control:focus {
+            box-shadow: none;
+            border-color: transparent;
+        }
     </style>
     <!-- Adicionar fontes para suporte japonês -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
