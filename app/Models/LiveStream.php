@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class LiveStream extends Model
 {
     protected $fillable = [
-        'youtube_video_id',
         'title',
         'description',
-        'is_active',
+        'youtube_video_id',
+        'is_active',  // Certifique-se de que é is_active e não active
         'start_time',
         'end_time'
     ];

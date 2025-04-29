@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\News;
+use App\Models\NewsImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -59,7 +60,7 @@ class NewsController extends Controller
             'content' => 'required|max:65000', // Limitar o texto para um tamanho razoável
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Limitar tamanho da imagem para 2MB
         ]);
-        
+
         try {
             // Criar a notícia
             $news = new News();
@@ -67,13 +68,26 @@ class NewsController extends Controller
             $news->content = $validated['content'];
             $news->author_id = auth()->id();
             
-            // Processar imagem se existir
+            // Processar imagem de capa se existir
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
                 $imagePath = $request->file('image')->store('news_images', 'public');
                 $news->image = $imagePath;
             }
             
             $news->save();
+            
+            // Salvar a imagem de capa no modelo NewsImage se existir
+            if ($request->hasFile('image') && $request->file('image')->isValid()) {
+                NewsImage::create([
+                    'news_id' => $news->id,
+                    'path' => $imagePath,
+                    'is_cover' => true,
+                    'caption' => $news->title
+                ]);
+            }
+            
+            // Extrair imagens do conteúdo e salvá-las no modelo NewsImage
+            $this->extractAndSaveContentImages($news);
             
             return redirect()->route('dashboard')->with('success', 'Notícia criada com sucesso! Aguardando aprovação.');
         } catch (\Exception $e) {
@@ -106,15 +120,39 @@ class NewsController extends Controller
         $news->content = $validated['content'];
         
         if ($request->hasFile('image')) {
+            // Apagar a imagem de capa antiga no model NewsImage
+            NewsImage::where('news_id', $news->id)
+                    ->where('is_cover', true)
+                    ->delete();
+                    
+            // Apagar a imagem física antiga
             if ($news->image) {
                 Storage::disk('public')->delete($news->image);
             }
+            
+            // Salvar nova imagem
             $path = $request->file('image')->store('news_images', 'public');
             $news->image = $path;
+            
+            // Salvar nova imagem no modelo NewsImage
+            NewsImage::create([
+                'news_id' => $news->id,
+                'path' => $path,
+                'is_cover' => true,
+                'caption' => $news->title
+            ]);
         }
         
         $news->approved = false;
         $news->save();
+        
+        // Limpar imagens antigas que não sejam de capa
+        NewsImage::where('news_id', $news->id)
+                ->where('is_cover', false)
+                ->delete();
+                
+        // Extrair novas imagens do conteúdo
+        $this->extractAndSaveContentImages($news);
         
         return redirect()->route('dashboard')->with('success', 'Notícia atualizada e aguardando aprovação.');
     }
@@ -146,5 +184,49 @@ class NewsController extends Controller
         $news->delete();
         
         return redirect()->route('dashboard')->with('success', 'Notícia excluída com sucesso.');
+    }
+
+    /**
+     * Extrair as URLs das imagens do conteúdo e salva no modelo NewsImage.
+     *
+     * @param News $news
+     * @return void
+     */
+    private function extractAndSaveContentImages(News $news)
+    {
+        // Usar expressão regular para encontrar todas as tags IMG no conteúdo
+        preg_match_all('/<img[^>]+src="([^"]+)"[^>]*>/i', $news->content, $matches);
+        
+        if (!empty($matches[1])) {
+            foreach ($matches[1] as $imageUrl) {
+                // Verificar se a URL é de uma imagem armazenada no storage
+                if (strpos($imageUrl, '/storage/news_content_images') !== false) {
+                    // Extrair o caminho relativo da URL
+                    $path = str_replace(url('/storage/'), '', $imageUrl);
+                    
+                    // Também tente extrair sem o URL completo (apenas o caminho relativo)
+                    if (strpos($path, 'news_content_images/') === false) {
+                        $path = 'news_content_images/' . basename($path);
+                    }
+                    
+                    // Verificar se esta imagem já está registrada
+                    $existingImage = \App\Models\NewsImage::where('news_id', $news->id)
+                                        ->where('path', $path)
+                                        ->first();
+                    
+                    if (!$existingImage) {
+                        // Log para depuração
+                        \Illuminate\Support\Facades\Log::info("Registrando imagem: {$path} para notícia {$news->id}");
+                        
+                        \App\Models\NewsImage::create([
+                            'news_id' => $news->id,
+                            'path' => $path,
+                            'is_cover' => false,
+                            'caption' => null
+                        ]);
+                    }
+                }
+            }
+        }
     }
 }

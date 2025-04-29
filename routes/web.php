@@ -7,11 +7,16 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LiveStreamController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Middleware\AdminMiddleware;
 
 // Rotas públicas
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+
+// Rotas para a galeria
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
+Route::get('/gallery/news/{news}', [GalleryController::class, 'showNewsImages'])->name('gallery.news');
 
 // Rota pública para obter a transmissão ativa
 Route::get('/live-stream/active', [LiveStreamController::class, 'getActive']);

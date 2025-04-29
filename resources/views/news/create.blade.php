@@ -35,9 +35,10 @@
         
         <div class="mb-3">
             <label for="image" class="form-label">Imagem para o background</label>
-            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image" accept="image/jpeg,image/png,image/jpg,image/gif">
-            <div class="form-text">Apenas imagens (JPG, PNG, GIF) são permitidas. Tamanho máximo: 2MB.</div>
-            <div class="form-text">Também recomendamos que a imagem seja em alta resolução, preferencialmente no formato 1920x1080, já que será utilizada como plano de fundo nas notícias.</div>
+            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" 
+                   name="image" accept="image/jpeg,image/png,image/gif,image/jpg" 
+                   data-max-size="2097152">
+            <small class="text-muted">Tamanho máximo: 2MB. Formatos permitidos: JPG, PNG, GIF.</small>
             @error('image')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -81,8 +82,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         })
                         .then(response => response.json())
                         .then(responseData => {
-                            if (!responseData || responseData.uploaded !== 1) {
+                            console.log('Resposta do servidor:', responseData);
+                            
+                            // CORREÇÃO AQUI: Verificar a estrutura da resposta corretamente
+                            if (!responseData || responseData.error) {
+                                console.error('Erro retornado pelo servidor:', responseData.error || 'Resposta inválida');
                                 reject(responseData && responseData.error ? responseData.error.message : 'Upload falhou');
+                                return;
+                            }
+                            
+                            // Verificar se a resposta tem a URL esperada
+                            if (!responseData.url) {
+                                console.error('URL não encontrada na resposta');
+                                reject('Formato de resposta inválido');
                                 return;
                             }
                             
@@ -148,31 +160,38 @@ document.addEventListener('DOMContentLoaded', function() {
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const profileImageInput = document.getElementById('profile_image');
-        const imagePreview = document.getElementById('imagePreview');
-        const previewImg = imagePreview.querySelector('img');
+        const imageInput = document.getElementById('image');
         
-        profileImageInput.addEventListener('change', function() {
+        // Adicionar validação de tamanho ao input de imagem
+        imageInput.addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 const file = this.files[0];
+                const maxSize = 2 * 1024 * 1024; // 2MB em bytes
                 
-                // Verificar tamanho do arquivo (máximo 2MB)
-                if (file.size > 2 * 1024 * 1024) {
-                    alert('A imagem não pode ter mais que 2MB');
+                if (file.size > maxSize) {
+                    // Mostrar alerta e limpar o campo
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Arquivo muito grande',
+                        text: 'A imagem não pode ter mais que 2MB. O arquivo selecionado tem ' + 
+                              (file.size / (1024 * 1024)).toFixed(2) + 'MB',
+                        confirmButtonText: 'Entendi'
+                    });
+                    
+                    // Limpar o campo de input
                     this.value = '';
-                    imagePreview.style.display = 'none';
                     return;
                 }
                 
+                // Mostrar preview da imagem se estiver ok
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    const previewImg = document.querySelector('#imagePreview img');
                     previewImg.src = e.target.result;
-                    imagePreview.style.display = 'block';
+                    document.getElementById('imagePreview').style.display = 'block';
                 };
                 
                 reader.readAsDataURL(file);
-            } else {
-                imagePreview.style.display = 'none';
             }
         });
     });

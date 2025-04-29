@@ -136,7 +136,7 @@
                                 @endif
                                 <div class="card-body">
                                     <h5 class="card-title">{{ Str::limit($latestItem->title, 40) }}</h5>
-                                    <p class="card-text small">{{ Str::limit(strip_tags($latestItem->content), 80) }}</p>
+                                    <p class="card-text small">{{ Str::limit(html_entity_decode(strip_tags($latestItem->content)), 80) }}</p>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <a href="{{ route('news.show', $latestItem) }}" class="btn btn-sm btn-outline-primary">Ler mais</a>
                                         <small class="text-muted">{{ $latestItem->published_at->format('d/m/Y') }}</small>

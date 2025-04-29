@@ -32,16 +32,13 @@
                         <img src="{{ asset('storage/' . $news->image) }}" alt="{{ $news->title }}" style="max-width: 200px;">
                     </div>
                 @endif
-                <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image">
+                <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" 
+                       name="image" accept="image/jpeg,image/png,image/gif,image/jpg" 
+                       data-max-size="2097152">
+                <small class="text-muted">Tamanho máximo: 2MB. Formatos permitidos: JPG, PNG, GIF.</small>
                 @error('image')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
-            </div>
-
-            <div class="mb-3">
-                <label for="profile_image" class="form-label">Foto de Perfil</label>
-                <input type="file" class="form-control" id="profile_image" name="profile_image" accept="image/*">
-                <div class="form-text">Escolha uma imagem de perfil (opcional). Recomendado: formato quadrado, máx. 2MB</div>
             </div>
 
             <div class="mb-3">
@@ -62,42 +59,141 @@
 @push('scripts')
 <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Definir adapter personalizado para upload
+    class MyUploadAdapter {
+        constructor(loader) {
+            this.loader = loader;
+        }
+
+        upload() {
+            return this.loader.file
+                .then(file => {
+                    return new Promise((resolve, reject) => {
+                        const data = new FormData();
+                        data.append('upload', file);
+                        
+                        // Adicionar token CSRF
+                        data.append('_token', '{{ csrf_token() }}');
+                        
+                        fetch('{{ route("ckeditor.upload") }}', {
+                            method: 'POST',
+                            body: data,
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(responseData => {
+                            console.log('Resposta do servidor:', responseData);
+                            
+                            if (!responseData || responseData.error) {
+                                console.error('Erro retornado pelo servidor:', responseData.error || 'Resposta inválida');
+                                reject(responseData && responseData.error ? responseData.error.message : 'Upload falhou');
+                                return;
+                            }
+                            
+                            if (!responseData.url) {
+                                console.error('URL não encontrada na resposta');
+                                reject('Formato de resposta inválido');
+                                return;
+                            }
+                            
+                            resolve({
+                                default: responseData.url
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Erro durante upload:', error);
+                            reject('Falha na comunicação com o servidor');
+                        });
+                    });
+                });
+        }
+
+        abort() {
+            // Cancelar upload se necessário
+        }
+    }
+
+    function MyCustomUploadAdapterPlugin(editor) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return new MyUploadAdapter(loader);
+        };
+    }
+
     ClassicEditor
-        .create(document.querySelector('#content'))
+        .create(document.querySelector('#content'), {
+            extraPlugins: [MyCustomUploadAdapterPlugin],
+            toolbar: {
+                items: [
+                    'heading', '|',
+                    'fontfamily', 'fontsize', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'alignment', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'indent', 'outdent', '|',
+                    'link', 'blockQuote', 'insertTable', 'imageUpload', '|',
+                    'undo', 'redo'
+                ]
+            },
+            image: {
+                toolbar: [
+                    'imageTextAlternative', '|',
+                    'imageStyle:alignLeft', 'imageStyle:alignCenter', 'imageStyle:alignRight'
+                ],
+                styles: [
+                    'alignLeft', 'alignCenter', 'alignRight'
+                ]
+            }
+        })
+        .then(editor => {
+            console.log('Editor inicializado com sucesso');
+            window.editor = editor;
+        })
         .catch(error => {
-            console.error(error);
+            console.error('Erro ao inicializar o editor:', error);
         });
+});
 </script>
 @endpush
 
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const profileImageInput = document.getElementById('profile_image');
-        const imagePreview = document.getElementById('imagePreview');
-        const previewImg = imagePreview.querySelector('img');
+        const imageInput = document.getElementById('image');
         
-        profileImageInput.addEventListener('change', function() {
+        // Adicionar validação de tamanho ao input de imagem
+        imageInput.addEventListener('change', function() {
             if (this.files && this.files[0]) {
                 const file = this.files[0];
+                const maxSize = 2 * 1024 * 1024; // 2MB em bytes
                 
-                // Verificar tamanho do arquivo (máximo 2MB)
-                if (file.size > 2 * 1024 * 1024) {
-                    alert('A imagem não pode ter mais que 2MB');
+                if (file.size > maxSize) {
+                    // Mostrar alerta e limpar o campo
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Arquivo muito grande',
+                        text: 'A imagem não pode ter mais que 2MB. O arquivo selecionado tem ' + 
+                              (file.size / (1024 * 1024)).toFixed(2) + 'MB',
+                        confirmButtonText: 'Entendi'
+                    });
+                    
+                    // Limpar o campo de input
                     this.value = '';
-                    imagePreview.style.display = 'none';
                     return;
                 }
                 
+                // Mostrar preview da imagem se estiver ok
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    const previewImg = document.querySelector('#imagePreview img');
                     previewImg.src = e.target.result;
-                    imagePreview.style.display = 'block';
+                    document.getElementById('imagePreview').style.display = 'block';
                 };
                 
                 reader.readAsDataURL(file);
-            } else {
-                imagePreview.style.display = 'none';
             }
         });
     });

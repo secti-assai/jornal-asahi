@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\News;
 use App\Models\LiveStream;
 use Illuminate\Http\Request;
+use App\Models\NewsImage;
 
 class HomeController extends Controller
 {
@@ -15,23 +16,34 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Busca as notícias aprovadas e publicadas, ordenadas pela data de publicação
+        // Código existente para buscar notícias em destaque e ao vivo
         $featuredNews = News::where('approved', true)
-            ->orderBy('published_at', 'desc')
-            ->take(5)
-            ->get();
-        
+                            ->whereNotNull('published_at')
+                            ->orderBy('published_at', 'desc')
+                            ->limit(5)
+                            ->get();
+                            
         $latestNews = News::where('approved', true)
-            ->orderBy('published_at', 'desc')
-            ->paginate(9);
+                          ->whereNotNull('published_at')
+                          ->orderBy('published_at', 'desc')
+                          ->limit(6)
+                          ->get();
+                          
+        // Corrija a consulta para usar a coluna is_active em vez de active
+        $activeLiveStream = LiveStream::where('is_active', true)
+                                   ->latest('start_time')
+                                   ->first();
+                                   
+        // Buscar imagens para a galeria da página inicial
+        $galleryImages = NewsImage::with('news')
+                                ->whereHas('news', function ($query) {
+                                    $query->where('approved', true)
+                                        ->whereNotNull('published_at');
+                                })
+                                ->latest()
+                                ->limit(12)
+                                ->get();
         
-        // Buscar transmissão ativa, com verificação para evitar erro caso a tabela não exista
-        try {
-            $activeLiveStream = LiveStream::where('is_active', true)->first();
-        } catch (\Exception $e) {
-            $activeLiveStream = null;
-        }
-        
-        return view('home', compact('featuredNews', 'latestNews', 'activeLiveStream'));
+        return view('home', compact('featuredNews', 'latestNews', 'activeLiveStream', 'galleryImages'));
     }
 }
