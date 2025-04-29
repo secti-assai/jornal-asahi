@@ -3,7 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'Asahi Shimbun') }}</title>
+    <title>
+        @hasSection('title')
+            @yield('title') - {{ config('app.name', 'Jornal Asahi') }}
+        @else
+            {{ config('app.name', 'Jornal Asahi') }}
+        @endif
+    </title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}?v=1.0">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}?v=1.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}?v=1.0">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}?v=1.0">
+    <link rel="mask-icon" href="{{ asset('safari-pinned-tab.svg') }}?v=1.0" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -256,28 +271,25 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4">
-                    <h5 class="mb-3">Asahi Shimbun</h5>
+                    <h5 class="mb-3">Jornal Asahi</h5>
                     <p class="text-light">Jornal municipal administrado por estudantes do ensino médio e fundamental da cidade de Assaí, focado em notícias, cultura e eventos para os jovens da comunidade.</p>
                     <div class="mt-3">
                         <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-light me-3"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-youtube"></i></a>
+                        <a href="https://www.instagram.com/valedosolpr/" class="text-light me-3"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.youtube.com/@valedosolpr" class="text-light"><i class="bi bi-youtube"></i></a>
                     </div>
                 </div>
                 <div class="col-md-2 mb-4">
                     <h5 class="mb-3">Sobre</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Nossa História</a></li>
-                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Equipe</a></li>
-                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Como Participar</a></li>
-                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Contato</a></li>
+                        <li><a href="https://valedosol.assai.pr.gov.br/" class="text-light text-decoration-none mb-2 d-block">Nossa História</a></li>
+                        <li><a href="https://valedosol.assai.pr.gov.br/" class="text-light text-decoration-none mb-2 d-block">Contato</a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 mb-4">
                     <h5 class="mb-3">Conteúdo</h5>
                     <ul class="list-unstyled">
                         <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Notícias</a></li>
-                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Eventos</a></li>
                         <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Galeria</a></li>
                         <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Vídeos</a></li>
                     </ul>
@@ -293,16 +305,14 @@
                 <div class="col-md-2 mb-4">
                     <h5 class="mb-3">Parceiros</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Prefeitura</a></li>
-                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Escolas</a></li>
-                        <li><a href="#" class="text-light text-decoration-none mb-2 d-block">Associações</a></li>
+                        <li><a href="https://www.assai.pr.gov.br/" class="text-light text-decoration-none mb-2 d-block">Prefeitura</a></li>
                     </ul>
                 </div>
             </div>
             <hr class="mt-3 mb-3 bg-light">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-0">© {{ date('Y') }} Asahi Shimbun. Todos os direitos reservados.</p>
+                    <p class="mb-0">© {{ date('Y') }} Jornal Asahi. Todos os direitos reservados.</p>
                     <p class="small">Desenvolvido pela Secretaria de Ciência, Tecnologia e Inovação.</p>
                 </div>
             </div>
