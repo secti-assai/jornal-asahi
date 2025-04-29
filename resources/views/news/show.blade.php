@@ -26,8 +26,14 @@
                 <h1 class="display-5 fw-bold mb-3">{{ $news->title }}</h1>
                 
                 <div class="d-flex align-items-center mb-4">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode($news->author->name) }}&background=random" 
-                        alt="{{ $news->author->name }}" class="rounded-circle me-3" width="48" height="48">
+                    @if($news->author->profile_image)
+                        <img src="{{ asset('storage/' . $news->author->profile_image) }}" 
+                            alt="{{ $news->author->name }}" class="rounded-circle me-3" 
+                            width="48" height="48" style="object-fit: cover;">
+                    @else
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($news->author->name) }}&background=random" 
+                            alt="{{ $news->author->name }}" class="rounded-circle me-3" width="48" height="48">
+                    @endif
                     
                     <div>
                         <div class="fw-bold">{{ $news->author->name }}</div>

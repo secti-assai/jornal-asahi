@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -46,14 +47,23 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        User::create([
+        $userData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role_id' => $validated['role_id'],
-        ]);
+        ];
+        
+        // Processar e salvar a imagem de perfil, se fornecida
+        if ($request->hasFile('profile_image') && $request->file('profile_image')->isValid()) {
+            $imagePath = $request->file('profile_image')->store('profile_images', 'public');
+            $userData['profile_image'] = $imagePath;
+        }
+
+        User::create($userData);
 
         return redirect()->route('users.index')->with('success', 'Usuário criado com sucesso!');
     }
@@ -85,6 +95,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = [
@@ -95,6 +106,17 @@ class UserController extends Controller
 
         if (!empty($validated['password'])) {
             $data['password'] = Hash::make($validated['password']);
+        }
+        
+        // Processar e salvar a imagem de perfil, se fornecida
+        if ($request->hasFile('profile_image') && $request->file('profile_image')->isValid()) {
+            // Se já existir uma imagem anterior, deletá-la
+            if ($user->profile_image) {
+                Storage::disk('public')->delete($user->profile_image);
+            }
+            
+            $imagePath = $request->file('profile_image')->store('profile_images', 'public');
+            $data['profile_image'] = $imagePath;
         }
 
         $user->update($data);

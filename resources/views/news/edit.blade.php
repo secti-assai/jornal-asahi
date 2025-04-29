@@ -37,6 +37,18 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+
+            <div class="mb-3">
+                <label for="profile_image" class="form-label">Foto de Perfil</label>
+                <input type="file" class="form-control" id="profile_image" name="profile_image" accept="image/*">
+                <div class="form-text">Escolha uma imagem de perfil (opcional). Recomendado: formato quadrado, máx. 2MB</div>
+            </div>
+
+            <div class="mb-3">
+                <div id="imagePreview" class="mt-2" style="display: none;">
+                    <img src="#" alt="Preview" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                </div>
+            </div>
             
             <div class="mb-3">
                 <button type="submit" class="btn btn-primary">Atualizar</button>
@@ -45,6 +57,7 @@
         </form>
     </div>
 </div>
+@endsection
 
 @push('scripts')
 <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
@@ -56,4 +69,37 @@
         });
 </script>
 @endpush
-@endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileImageInput = document.getElementById('profile_image');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = imagePreview.querySelector('img');
+        
+        profileImageInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                
+                // Verificar tamanho do arquivo (máximo 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('A imagem não pode ter mais que 2MB');
+                    this.value = '';
+                    imagePreview.style.display = 'none';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+            }
+        });
+    });
+</script>
+@endpush

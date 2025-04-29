@@ -134,8 +134,7 @@
                 <div class="card-body">
                     <h5 class="card-title mb-3">{{ $item->title }}</h5>
                     <div class="d-flex align-items-center mb-3">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode($item->author->name) }}&background=random" 
-                            class="rounded-circle me-2" alt="{{ $item->author->name }}" width="30" height="30">
+                        {!! App\Helpers\UserHelper::getAvatarHtml($item->author, 30, 'rounded-circle me-2') !!}
                         <div>
                             <small class="d-block text-muted">{{ $item->author->name }}</small>
                             <small class="text-muted">{{ $item->published_at ? $item->published_at->format('d/m/Y') : 'Não publicado' }}</small>

@@ -5,7 +5,7 @@
     <div class="col-md-8 offset-md-2">
         <h1>Editar Usuário</h1>
         
-        <form action="{{ route('users.update', ['id' => $user->id]) }}" method="POST">
+        <form action="{{ route('users.update', ['id' => $user->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             
@@ -51,6 +51,25 @@
             <div class="mb-3">
                 <label for="password_confirmation" class="form-label">Confirmar Nova Senha</label>
                 <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+            </div>
+
+            <div class="mb-3">
+                <label for="profile_image" class="form-label">Foto de Perfil</label>
+                <input type="file" class="form-control" id="profile_image" name="profile_image" accept="image/*">
+                <div class="form-text">Escolha uma imagem de perfil (opcional). Recomendado: formato quadrado, máx. 2MB</div>
+                
+                @if($user->profile_image)
+                    <div class="mt-2">
+                        <p>Imagem atual:</p>
+                        <img src="{{ asset('storage/' . $user->profile_image) }}" alt="{{ $user->name }}" 
+                             class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                    </div>
+                @endif
+                
+                <div id="imagePreview" class="mt-2" style="display: none;">
+                    <p>Nova imagem:</p>
+                    <img src="#" alt="Preview" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                </div>
             </div>
             
             <div class="mb-3">

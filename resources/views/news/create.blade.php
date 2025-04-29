@@ -144,3 +144,37 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileImageInput = document.getElementById('profile_image');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = imagePreview.querySelector('img');
+        
+        profileImageInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                
+                // Verificar tamanho do arquivo (máximo 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('A imagem não pode ter mais que 2MB');
+                    this.value = '';
+                    imagePreview.style.display = 'none';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+            }
+        });
+    });
+</script>
+@endpush
