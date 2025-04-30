@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'America/Sao_Paulo', // Para usar o horário de Brasília
 
     /*
     |--------------------------------------------------------------------------

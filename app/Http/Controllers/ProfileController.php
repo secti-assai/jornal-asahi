@@ -126,6 +126,8 @@ class ProfileController extends Controller
             'user_id' => $targetUser->id,
             'comment' => $validated['comment'] ?? null,
             'like' => $validated['like'] ?? false,
+            'created_at' => now(), // Garantir que a data atual seja usada
+            'updated_at' => now()
         ];
         
         // Se o usuário estiver autenticado, registrar quem fez o comentário
