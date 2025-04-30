@@ -13,9 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('news_images', function (Blueprint $table) {
-            $table->renameColumn('is_featured', 'is_cover');
-        });
+        // Vamos verificar primeiro se a coluna existe antes de tentar renomeá-la
+        if (Schema::hasTable('news_images') && Schema::hasColumn('news_images', 'is_featured')) {
+            Schema::table('news_images', function (Blueprint $table) {
+                $table->renameColumn('is_featured', 'is_cover');
+            });
+        }
     }
 
     /**
@@ -25,8 +28,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('news_images', function (Blueprint $table) {
-            $table->renameColumn('is_cover', 'is_featured');
-        });
+        if (Schema::hasTable('news_images') && Schema::hasColumn('news_images', 'is_cover')) {
+            Schema::table('news_images', function (Blueprint $table) {
+                $table->renameColumn('is_cover', 'is_featured');
+            });
+        }
     }
 };
