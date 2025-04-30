@@ -39,10 +39,20 @@
                     </div>
                     <h3 class="h4 mb-1">{{ $user->name }}</h3>
                     <p class="text-muted mb-2">{{ '@'.$user->username }}</p>
-                    <p class="mb-2">
-                        <span class="badge bg-primary">{{ $user->role->name }}</span>
-                        <span class="badge bg-secondary">{{ $user->education_level }}</span>
-                    </p>
+                    <div class="d-flex justify-content-center align-items-center mb-3">
+                        <span class="badge bg-primary me-2">{{ $user->role->name }}</span>
+                        <span class="badge bg-info me-2">{{ $user->education_level }}</span>
+                        
+                        @if($user->relation)
+                            <span class="badge 
+                                @if($user->relation == 'Rua') bg-success 
+                                @elseif($user->relation == 'Âncora') bg-info
+                                @elseif($user->relation == 'Marketing') bg-warning text-dark
+                                @endif">
+                                {{ $user->relation }}
+                            </span>
+                        @endif
+                    </div>
                     <div class="d-flex justify-content-center align-items-center mb-3">
                         <span class="me-3">
                             <i class="bi bi-hand-thumbs-up-fill text-primary"></i> {{ $likesCount }}

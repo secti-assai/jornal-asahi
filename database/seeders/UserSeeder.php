@@ -270,6 +270,18 @@ class UserSeeder extends Seeder
 
         // Criando usuários com senha padrão
         foreach ($users as $userData) {
+            if (!isset($userData['relation'])) {
+                // Define um valor padrão com base no nome do usuário ou outro critério
+                if (strpos($userData['name'], 'Marketing') !== false) {
+                    $userData['relation'] = 'Marketing';
+                } elseif (strpos($userData['description'], 'âncora') !== false || 
+                          strpos($userData['description'], 'Âncora') !== false) {
+                    $userData['relation'] = 'Âncora';
+                } else {
+                    $userData['relation'] = 'Rua';
+                }
+            }
+            
             // Adicionar dados comuns
             $commonData = [
                 'password' => Hash::make('senha1234'),

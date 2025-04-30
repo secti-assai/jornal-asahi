@@ -45,10 +45,14 @@
                     <h3 class="h4 mb-1">{{ $user->name }}</h3>
                     <p class="text-muted mb-2">{{ '@'.$user->username }}</p>
                     
-                    <p class="mb-3">
-                        <span class="badge bg-primary">{{ $user->role->name }}</span>
-                        <span class="badge bg-secondary">{{ $user->education_level }}</span>
-                    </p>
+                    <div class="d-flex justify-content-center align-items-center mb-3">
+                        <div class="badge bg-primary me-2">{{ $user->role->name }}</div>
+                        <div class="badge bg-info me-2">{{ $user->education_level }}</div>
+                        
+                        @if($user->relation)
+                            <div class="badge bg-secondary">{{ $user->relation }}</div>
+                        @endif
+                    </div>
                     
                     <div class="d-flex justify-content-center align-items-center mb-3">
                         <span class="me-3">

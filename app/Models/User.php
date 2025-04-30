@@ -16,6 +16,7 @@ class User extends Authenticatable
         'email',
         'description',
         'education_level',
+        'relation', // Novo campo adicionado
         'password',
         'role_id',
         'profile_image'

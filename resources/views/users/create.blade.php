@@ -93,6 +93,22 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+
+            <!-- Adicione este novo campo após o campo de educação -->
+
+            <div class="mb-3">
+                <label for="relation" class="form-label">Relação</label>
+                <select class="form-select @error('relation') is-invalid @enderror" id="relation" name="relation" required>
+                    <option value="">Selecione a relação</option>
+                    <option value="Rua" {{ old('relation') == 'Rua' ? 'selected' : '' }}>Rua</option>
+                    <option value="Âncora" {{ old('relation') == 'Âncora' ? 'selected' : '' }}>Âncora</option>
+                    <option value="Marketing" {{ old('relation') == 'Marketing' ? 'selected' : '' }}>Marketing</option>
+                </select>
+                @error('relation')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+                <small class="form-text text-muted">Selecione a função principal do usuário no jornal</small>
+            </div>
             
             <div class="mb-3">
                 <label for="profile_image" class="form-label">Foto de Perfil</label>

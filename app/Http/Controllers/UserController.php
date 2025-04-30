@@ -52,6 +52,7 @@ class UserController extends Controller
             'role_id' => 'required|exists:roles,id',
             'description' => 'nullable|string|max:1000',
             'education_level' => 'required|in:Ensino Fundamental,Ensino Médio,Ensino Superior',
+            'relation' => 'required|in:Rua,Âncora,Marketing', // Novo campo
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -63,6 +64,7 @@ class UserController extends Controller
             'role_id' => $validated['role_id'],
             'description' => $validated['description'],
             'education_level' => $validated['education_level'],
+            'relation' => $validated['relation'], // Novo campo
         ];
         
         // Processar e salvar a imagem de perfil, se fornecida

@@ -52,6 +52,7 @@ class ProfileController extends Controller
             ],
             'description' => 'nullable|string|max:1000',
             'education_level' => 'required|in:Ensino Fundamental,Ensino Médio,Ensino Superior',
+            'relation' => 'required|in:Rua,Âncora,Marketing', // Adicionar esta linha
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
         
@@ -60,6 +61,7 @@ class ProfileController extends Controller
             'username' => $validated['username'],
             'description' => $validated['description'],
             'education_level' => $validated['education_level'],
+            'relation' => $validated['relation'], // Adicionar esta linha
         ];
         
         // Processar e salvar a imagem de perfil, se fornecida
@@ -73,6 +75,7 @@ class ProfileController extends Controller
             $data['profile_image'] = $imagePath;
         }
         
+        $user->relation = $validated['relation']; 
         $user->update($data);
         
         return redirect()->route('profile.show')->with('success', 'Perfil atualizado com sucesso!');

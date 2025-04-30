@@ -83,6 +83,21 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+
+                                <div class="mb-3">
+                                    <label for="relation" class="form-label">Relação</label>
+                                    <select class="form-select @error('relation') is-invalid @enderror" 
+                                            id="relation" name="relation" required>
+                                        <option value="">Selecione a relação</option>
+                                        <option value="Rua" {{ old('relation', $user->relation) == 'Rua' ? 'selected' : '' }}>Rua</option>
+                                        <option value="Âncora" {{ old('relation', $user->relation) == 'Âncora' ? 'selected' : '' }}>Âncora</option>
+                                        <option value="Marketing" {{ old('relation', $user->relation) == 'Marketing' ? 'selected' : '' }}>Marketing</option>
+                                    </select>
+                                    @error('relation')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <small class="form-text text-muted">Sua função principal no Jornal Asahi</small>
+                                </div>
                             </div>
                         </div>
                         

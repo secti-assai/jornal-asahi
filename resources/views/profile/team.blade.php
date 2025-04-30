@@ -14,8 +14,8 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
         @forelse($reporters as $reporter)
             <div class="col">
-                <div class="card h-100 border-0 shadow-sm team-card">
-                    <div class="card-body text-center p-4">
+                <div class="card team-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
                         @if($reporter->profile_image)
                             <img src="{{ asset('storage/'.$reporter->profile_image) }}" 
                                  alt="{{ $reporter->name }}" 
@@ -28,16 +28,27 @@
                                  style="width: 120px; height: 120px;">
                         @endif
                         
-                        <h3 class="h5 mb-1">{{ $reporter->name }}</h3>
+                        <h5 class="card-title mb-1">{{ $reporter->name }}</h5>
                         <p class="text-muted small mb-2">{{ '@'.$reporter->username }}</p>
                         
-                        <div class="mb-3">
-                            <span class="badge bg-secondary">{{ $reporter->education_level }}</span>
+                        <div class="d-flex justify-content-center mb-3">
+                            <span class="badge bg-primary me-1">{{ $reporter->role->name }}</span>
+                            <span class="badge bg-info me-1">{{ $reporter->education_level }}</span>
+                            
+                            @if($reporter->relation)
+                                <span class="badge 
+                                    @if($reporter->relation == 'Rua') bg-success 
+                                    @elseif($reporter->relation == 'Âncora') bg-info
+                                    @elseif($reporter->relation == 'Marketing') bg-warning text-dark
+                                    @endif">
+                                    {{ $reporter->relation }}
+                                </span>
+                            @endif
                         </div>
                         
-                        @if($reporter->description)
-                            <p class="card-text small mb-3">{{ Str::limit($reporter->description, 100) }}</p>
-                        @endif
+                        <p class="card-text small mb-3">
+                            {{ \Illuminate\Support\Str::limit($reporter->description, 100) }}
+                        </p>
                         
                         <a href="{{ route('profile.public', $reporter->username) }}" class="btn btn-sm btn-outline-primary">
                             Ver perfil completo
