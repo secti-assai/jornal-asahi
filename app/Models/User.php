@@ -12,10 +12,13 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'username',
         'email',
+        'description',
+        'education_level',
         'password',
         'role_id',
-        'profile_image',
+        'profile_image'
     ];
 
     protected $hidden = [
@@ -71,5 +74,21 @@ class User extends Authenticatable
     public function isReporter()
     {
         return $this->role_id === 1 || $this->isApprover(); // ID 1 é reporter
+    }
+
+    /**
+     * Obter todas as interações que este usuário recebeu
+     */
+    public function receivedInteractions()
+    {
+        return $this->hasMany(UserInteraction::class, 'user_id');
+    }
+
+    /**
+     * Obter todas as interações que este usuário realizou
+     */
+    public function madeInteractions()
+    {
+        return $this->hasMany(UserInteraction::class, 'visitor_id');
     }
 }

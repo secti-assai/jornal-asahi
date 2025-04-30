@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LiveStreamController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AdminMiddleware;
 
 // Rotas públicas
@@ -68,3 +69,20 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/ckeditor/upload', [App\Http\Controllers\CKEditorController::class, 'upload'])
     ->name('ckeditor.upload')
     ->middleware('web');  // Adiciona explicitamente o middleware 'web'
+
+// Adicione estas novas rotas ao arquivo de rotas
+
+// Rotas para perfil pessoal (protegidas por autenticação)
+Route::middleware(['auth'])->group(function () {
+    // Perfil próprio
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
+
+// Rotas públicas para equipe e perfis públicos
+Route::get('/equipe', [ProfileController::class, 'listReporters'])->name('team.index');
+Route::get('/equipe/{username}', [ProfileController::class, 'showPublic'])->name('profile.public');
+
+// Rota para interações (likes/comentários)
+Route::post('/profile/{user}/interaction', [ProfileController::class, 'addInteraction'])->name('profile.interaction');

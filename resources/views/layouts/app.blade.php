@@ -262,6 +262,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="https://valedosol.assai.pr.gov.br/" target="_blank" rel="noopener noreferrer"">Vale do Sol</a>
                     </li>
+                    <!-- Adicione este item ao navbar -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('team.index') }}">Equipe</a>
+                    </li>
                 </ul>
                 <div class="d-flex">
                     @guest
@@ -273,6 +277,7 @@
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{{ route('profile.show') }}">Perfil</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form action="{{ route('logout') }}" method="POST">
