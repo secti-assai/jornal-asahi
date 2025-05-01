@@ -78,7 +78,7 @@
                         </h2>
                         <p class="text-muted small mb-0">Acompanhe nossas transmissões em tempo real</p>
                     </div>
-                    <a href="#" class="text-decoration-none text-primary d-none d-md-block small">
+                    <a href="/transmissoes" class="text-decoration-none text-primary d-none d-md-block small">
                         Mais <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
@@ -182,6 +182,104 @@
             </div>
         </div>
     </div>
+
+    <!-- Nova seção: Entrevistas -->
+    <section class="py-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h2 class="section-title h4 mb-1">
+                        <i class="bi bi-mic"></i> Entrevistas
+                    </h2>
+                    <p class="text-muted small mb-0">Conversas e depoimentos com personalidades</p>
+                </div>
+                <a href="{{ route('interviews.list') }}" class="text-decoration-none text-primary d-none d-md-block small">
+                    Ver todas <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            @if(isset($featuredInterview) && $featuredInterview)
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow-sm border-0 overflow-hidden">
+                        <div class="ratio ratio-16x9">
+                            <iframe 
+                                src="https://www.youtube.com/embed/{{ $featuredInterview->youtube_video_id }}?rel=0" 
+                                title="{{ $featuredInterview->title }}" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title h5">{{ $featuredInterview->title }}</h3>
+                            @if($featuredInterview->interviewee)
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-person"></i> 
+                                Entrevista com: {{ $featuredInterview->interviewee }}
+                            </p>
+                            @endif
+                            <div class="d-flex align-items-center mb-2 small">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                <small class="text-muted">
+                                    {{ $featuredInterview->interview_date ? $featuredInterview->interview_date->format('d/m/Y') : 'Data não definida' }}
+                                </small>
+                            </div>
+                            <p class="card-text">{{ Str::limit($featuredInterview->description, 150) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @forelse($latestInterviews as $interview)
+                    <div class="col">
+                        <div class="card shadow-sm border-0 h-100">
+                            <div class="ratio ratio-16x9">
+                                <img src="https://img.youtube.com/vi/{{ $interview->youtube_video_id }}/mqdefault.jpg" 
+                                    alt="{{ $interview->title }}"
+                                    class="card-img-top interview-thumbnail">
+                                <div class="overlay-play">
+                                    <a href="https://www.youtube.com/watch?v={{ $interview->youtube_video_id }}" 
+                                       target="_blank" class="play-button">
+                                        <i class="bi bi-play-circle-fill"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h3 class="card-title h6">{{ Str::limit($interview->title, 60) }}</h3>
+                                @if($interview->interviewee)
+                                <p class="text-muted small mb-1">
+                                    <i class="bi bi-person"></i> {{ $interview->interviewee }}
+                                </p>
+                                @endif
+                                <p class="card-text small">{{ Str::limit($interview->description, 80) }}</p>
+                            </div>
+                            <div class="card-footer bg-transparent border-0">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar-event"></i>
+                                    {{ $interview->interview_date ? $interview->interview_date->format('d/m/Y') : 'Data não definida' }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            Nenhuma entrevista disponível no momento.
+                        </div>
+                    </div>
+                @endforelse
+            </div>
+            
+            <div class="text-center mt-3 d-md-none">
+                <a href="{{ route('interviews.list') }}" class="btn btn-sm btn-outline-primary">
+                    Ver todas as entrevistas
+                </a>
+            </div>
+        </div>
+    </section>
 
     <!-- Seção: Equipe de Repórteres Mirins -->
     <div class="row mb-5">
@@ -310,23 +408,60 @@
     }
     
     /* Estilo para a seção de repórteres mirins */
-.reporter-team-section img {
-    transition: transform 1.5s ease;
-}
+    .reporter-team-section img {
+        transition: transform 1.5s ease;
+    }
 
-.reporter-team-section:hover img {
-    transform: scale(1.03);
-}
+    .reporter-team-section:hover img {
+        transform: scale(1.03);
+    }
 
-@media (max-width: 767px) {
-    .reporter-team-section h2 {
-        font-size: 1.5rem;
+    @media (max-width: 767px) {
+        .reporter-team-section h2 {
+            font-size: 1.5rem;
+        }
+        
+        .reporter-team-section p {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* Estilos para a seção de entrevistas */
+    .interview-thumbnail {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
     }
     
-    .reporter-team-section p {
-        font-size: 0.85rem;
+    .overlay-play {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
-}
+    
+    .card:hover .overlay-play {
+        opacity: 1;
+    }
+    
+    .play-button {
+        font-size: 3rem;
+        color: white;
+        text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    
+    .play-button:hover {
+        color: #ff0000;
+        transform: scale(1.1);
+        transition: all 0.3s ease;
+    }
 </style>
 @endpush
 

@@ -136,4 +136,21 @@ class LiveStreamController extends Controller
         
         return response()->json(['message' => 'No active live stream found'], 404);
     }
+
+    /**
+     * Lista todas as transmissões ao vivo (passadas e atuais)
+     * 
+     * @return \Illuminate\View\View
+     */
+    public function listAll()
+    {
+        // Buscar todas as transmissões ordenadas pela mais recente primeiro
+        $liveStreams = LiveStream::orderBy('start_time', 'desc')
+                                ->paginate(9); // 9 itens por página para uma grade 3x3
+        
+        // Pegar a transmissão ativa atual, se houver
+        $activeLiveStream = LiveStream::where('is_active', true)->first();
+        
+        return view('live-streams.list', compact('liveStreams', 'activeLiveStream'));
+    }
 }

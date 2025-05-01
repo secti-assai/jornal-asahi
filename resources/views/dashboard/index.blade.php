@@ -384,6 +384,9 @@
         </div>
     </div>
     @endif
+
+    <!-- Adicionar junto aos outros componentes -->
+    @include('dashboard.partials.interviews')
 </div>
 
 @push('scripts')

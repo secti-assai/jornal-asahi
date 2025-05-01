@@ -6,6 +6,7 @@ use App\Models\News;
 use App\Models\LiveStream;
 use Illuminate\Http\Request;
 use App\Models\NewsImage;
+use App\Models\Interview;
 
 class HomeController extends Controller
 {
@@ -44,6 +45,14 @@ class HomeController extends Controller
                                 ->limit(12)
                                 ->get();
         
-        return view('home', compact('featuredNews', 'latestNews', 'activeLiveStream', 'galleryImages'));
+        // Buscar entrevistas em destaque
+        $featuredInterview = Interview::where('featured', true)
+                                ->first();
+                                
+        $latestInterviews = Interview::orderBy('interview_date', 'desc')
+                              ->limit(3)
+                              ->get();
+    
+        return view('home', compact('featuredNews', 'latestNews', 'activeLiveStream', 'galleryImages', 'featuredInterview', 'latestInterviews'));
     }
 }

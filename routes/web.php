@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LiveStreamController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\InterviewController;
 use App\Http\Middleware\AdminMiddleware;
 
 // Rotas públicas
@@ -21,6 +22,11 @@ Route::get('/gallery/news/{news}', [GalleryController::class, 'showNewsImages'])
 
 // Rota pública para obter a transmissão ativa
 Route::get('/live-stream/active', [LiveStreamController::class, 'getActive']);
+
+// Adicione esta rota antes das rotas com parâmetros
+Route::get('/transmissoes', [LiveStreamController::class, 'listAll'])->name('live-streams.list');
+
+Route::get('/entrevistas', [InterviewController::class, 'listAll'])->name('interviews.list');
 
 // Rotas protegidas por autenticação
 Route::middleware(['auth'])->group(function () {
@@ -55,6 +61,14 @@ Route::middleware([AdminMiddleware::class])->group(function () {
     Route::put('/admin/live-streams/{id}', [LiveStreamController::class, 'update'])->name('live-streams.update');
     Route::delete('/admin/live-streams/{id}', [LiveStreamController::class, 'destroy'])->name('live-streams.destroy');
     Route::put('/admin/live-streams/{id}/activate', [LiveStreamController::class, 'activate'])->name('live-streams.activate');
+
+    // Rota para gerenciar entrevistas
+    Route::get('/admin/interviews', [InterviewController::class, 'index'])->name('interviews.index');
+    Route::post('/admin/interviews', [InterviewController::class, 'store'])->name('interviews.store');
+    Route::get('/admin/interviews/{id}', [InterviewController::class, 'show'])->name('interviews.show');
+    Route::put('/admin/interviews/{id}', [InterviewController::class, 'update'])->name('interviews.update');
+    Route::delete('/admin/interviews/{id}', [InterviewController::class, 'destroy'])->name('interviews.destroy');
+    Route::put('/admin/interviews/{id}/toggle-featured', [InterviewController::class, 'toggleFeatured'])->name('interviews.toggle-featured');
 });
 
 // Rotas públicas com parâmetros (DEVE VIR DEPOIS das rotas específicas)
