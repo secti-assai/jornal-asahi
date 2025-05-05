@@ -1,61 +1,67 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Jornal Asahi
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Visão Geral
 
-## About Laravel
+O Jornal Asahi é um portal jornalístico digital desenvolvido para jovens da comunidade de Assaí, oferecendo uma plataforma onde repórteres jovens podem publicar notícias, entrevistas e conteúdo multimídia para sua comunidade.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Funcionalidades Principais
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Sistema de Notícias**: Criação, edição, aprovação e publicação de notícias
+- **Gerenciamento de Imagens**: Upload e organização de imagens para notícias com galeria integrada
+- **Transmissões ao Vivo**: Sistema para gerenciar e destacar transmissões ao vivo
+- **Entrevistas**: Publicação de entrevistas em vídeo com integração ao YouTube
+- **Sistema de Perfis**: Perfis de usuários com diferentes níveis de permissão
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Estrutura de Usuários
 
-## Learning Laravel
+O sistema possui três níveis de acesso:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Repórteres** (role_id: 1): Podem criar e editar notícias
+2. **Aprovadores** (role_id: 2): Podem aprovar e publicar notícias
+3. **Administradores** (role_id: 3): Acesso completo ao sistema
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Tecnologias Utilizadas
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Backend**: PHP/Laravel
+- **Banco de Dados**: PostgreSQL
+- **Editor de Conteúdo**: CKEditor 5
+- **Armazenamento de Arquivos**: Laravel Storage
 
-## Laravel Sponsors
+## Principais Componentes
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Modelos
 
-### Premium Partners
+- `News`: Gerencia notícias e seus estados de aprovação
+- `User`: Controla usuários e níveis de permissão
+- `NewsImage`: Gerencia imagens associadas às notícias
+- `Interview`: Administra entrevistas em vídeo
+- `LiveStream`: Controla transmissões ao vivo
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+### Controladores
 
-## Contributing
+- `NewsController`: Gerencia o fluxo de criação, edição e aprovação de notícias
+- `GalleryController`: Controla a exibição de imagens na galeria
+- `ProfileController`: Gerencia perfis de usuário e interações
+- `HomeController`: Controla a exibição da página inicial
+- `DashboardController`: Gerencia o painel administrativo
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Fluxo de Publicação
 
-## Code of Conduct
+1. Repórteres criam notícias com texto e imagens
+2. As notícias ficam pendentes para aprovação
+3. Aprovadores ou administradores revisam e publicam
+4. O conteúdo aprovado aparece no site para o público
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Recursos Especiais
 
-## Security Vulnerabilities
+- **Extração automática de imagens**: O sistema extrai automaticamente imagens do conteúdo e as organiza na galeria
+- **Interações entre usuários**: Sistema para comentários e curtidas em perfis
+- **Galeria de imagens**: Mostra imagens de notícias organizadas por tipo (capa ou conteúdo)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Equipe de Repórteres
 
-## License
+O sistema foi projetado para jovens repórteres de diferentes níveis educacionais (Ensino Fundamental e Médio) da comunidade de Assaí, proporcionando uma experiência jornalística prática e educativa.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+Este projeto tem como objetivo dar voz aos jovens assaienses, oferecendo uma plataforma moderna para compartilhamento de histórias locais, desenvolvimento de habilidades jornalísticas e engajamento comunitário.
